@@ -1,8 +1,6 @@
-﻿using System.Data.Common;
-
-namespace CSLox
+﻿namespace CSLox
 {
-    internal class Scanner
+    public class Scanner
     {
         private readonly string _Source;
         private readonly List<Token> _Tokens = new();
@@ -122,7 +120,7 @@ namespace CSLox
                 Advance();
             }
 
-            string text = _Source.Substring(_Start, _Current);
+            string text = _Source.Substring(_Start, _Current - _Start);
             TokenType type = TokenType.IDENTIFIER;
 
             if (_Keywords.ContainsKey(text))
@@ -149,7 +147,7 @@ namespace CSLox
                 }
             }
 
-            AddToken(TokenType.NUMBER, double.Parse(_Source.Substring(_Start, _Current)));
+            AddToken(TokenType.NUMBER, double.Parse(_Source.Substring(_Start, _Current - _Start)));
         }
 
         private void String()
@@ -168,7 +166,7 @@ namespace CSLox
 
             Advance(); // Get the closing " quotation
 
-            string value = _Source.Substring(_Start + 1, _Current - 1);
+            string value = _Source.Substring(_Start + 1, (_Current - _Start) - 2);
             AddToken(TokenType.STRING, value);
         }
 
@@ -212,7 +210,7 @@ namespace CSLox
 
         private bool IsAtEnd()
         {
-            return _Current <= _Source.Length;
+            return _Current >= _Source.Length;
         }
 
         private char Advance()
@@ -229,7 +227,7 @@ namespace CSLox
 
         private void AddToken(TokenType type, object? literal)
         {
-            string text = _Source.Substring(_Start, _Current);
+            string text = _Source.Substring(_Start, _Current - _Start);
             _Tokens.Add(new Token(type, text, literal, _Line));
         }
     }
