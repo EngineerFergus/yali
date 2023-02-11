@@ -1,4 +1,6 @@
-﻿namespace CSLox
+﻿using System.Data.Common;
+
+namespace CSLox
 {
     internal class Scanner
     {
@@ -7,6 +9,26 @@
         private int _Start = 0;
         private int _Current = 0;
         private int _Line = 1;
+
+        private readonly Dictionary<string, TokenType> _Keywords = new()
+        {
+            { "and", TokenType.AND },
+            { "class", TokenType.CLASS },
+            { "else", TokenType.ELSE },
+            { "false", TokenType.FALSE },
+            { "for", TokenType.FOR },
+            { "fun", TokenType.FUN },
+            { "if", TokenType.IF },
+            { "nil", TokenType.NIL },
+            { "or", TokenType.OR },
+            { "print", TokenType.PRINT },
+            { "return", TokenType.RETURN },
+            { "super", TokenType.SUPER },
+            { "this", TokenType.THIS },
+            { "true", TokenType.TRUE },
+            { "var", TokenType.VAR },
+            { "while", TokenType.WHILE },
+        };
 
         public Scanner(string source)
         {
@@ -80,6 +102,10 @@
                     {
                         Number();
                     }
+                    else if (IsAlpha(c))
+                    {
+                        Identifier();
+                    }
                     else
                     {
                         Lox.Error(_Line, $"Unexpected character {c}");
@@ -87,6 +113,24 @@
 
                     break;
             }
+        }
+
+        private void Identifier()
+        {
+            while (IsAlphaNumeric(Peek()))
+            {
+                Advance();
+            }
+
+            string text = _Source.Substring(_Start, _Current);
+            TokenType type = TokenType.IDENTIFIER;
+
+            if (_Keywords.ContainsKey(text))
+            {
+                type = _Keywords[text];
+            }
+
+            AddToken(type);
         }
 
         private void Number()
@@ -147,6 +191,18 @@
         {
             if (_Current + 1 >= _Source.Length) { return '\0'; }
             return _Source[_Current + 1];
+        }
+
+        private bool IsAlpha(char c)
+        {
+            return (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                c == '_';
+        }
+
+        private bool IsAlphaNumeric(char c)
+        {
+            return IsAlpha(c) || IsDigit(c);
         }
 
         private bool IsDigit(char c)
