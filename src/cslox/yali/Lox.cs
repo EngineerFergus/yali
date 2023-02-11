@@ -59,7 +59,7 @@ namespace CSLox
             }
         }
 
-        private static void Error(int line, string message)
+        public static void Error(int line, string message)
         {
             Report(line, string.Empty, message);
         }
