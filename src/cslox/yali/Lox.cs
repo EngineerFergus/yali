@@ -51,7 +51,7 @@ namespace CSLox
         private static void Run(string source)
         {
             Scanner scanner = new Scanner(source);
-            List<Tokens> tokens = scanner.ScanTokens();
+            List<Token> tokens = scanner.ScanTokens();
 
             foreach (Token token in tokens)
             {
