@@ -38,8 +38,11 @@ namespace GenerateAst
             builder.AppendLine("        public Token? Operator { get; init; }");
             builder.AppendLine("        public Expr? Right { get; init; }");
             builder.AppendLine("        public object? Value { get; init; }");
+            builder.AppendLine("        public abstract T Accept<T>(IVisitor<T> visitor);");
 
             builder.AppendLine("    }");
+
+            DefineVisitor(builder, baseName, types);
 
             foreach (string type in types)
             {
@@ -52,6 +55,22 @@ namespace GenerateAst
 
             builder.AppendLine("}");
             File.WriteAllText(path, builder.ToString());
+        }
+
+        private static void DefineVisitor(StringBuilder builder, string baseName, List<string> types)
+        {
+            builder.AppendLine();
+            builder.AppendLine("    public interface IVisitor<T>");
+            builder.AppendLine("    {");
+
+            foreach (string type in types)
+            {
+                string[] splits = type.Split(':');
+                string className = splits[0].Trim();
+                builder.AppendLine($"        T Visit{className}{baseName}({className} {className.ToLower()});");
+            }
+
+            builder.AppendLine("    }");
         }
 
         private static void DefineType(StringBuilder builder, string baseName, string className, string fieldList)
@@ -79,6 +98,13 @@ namespace GenerateAst
                 builder.AppendLine($"            {field.MemberName} = {field.ParamName};");
             }
 
+            builder.AppendLine("        }");
+
+            // Visitor pattern
+            builder.AppendLine();
+            builder.AppendLine("        public override T Accept<T>(IVisitor<T> visitor)");
+            builder.AppendLine("        {");
+            builder.AppendLine($"            return visitor.Visit{className}{baseName}(this);");
             builder.AppendLine("        }");
             builder.AppendLine("    }");
         }

@@ -7,6 +7,15 @@ namespace CSLox
         public Token? Operator { get; init; }
         public Expr? Right { get; init; }
         public object? Value { get; init; }
+        public abstract T Accept<T>(IVisitor<T> visitor);
+    }
+
+    public interface IVisitor<T>
+    {
+        T VisitBinaryExpr(Binary binary);
+        T VisitGroupingExpr(Grouping grouping);
+        T VisitLiteralExpr(Literal literal);
+        T VisitUnaryExpr(Unary unary);
     }
 
     public class Binary : Expr
@@ -17,6 +26,11 @@ namespace CSLox
             Operator = op;
             Right = right;
         }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitBinaryExpr(this);
+        }
     }
 
     public class Grouping : Expr
@@ -24,6 +38,11 @@ namespace CSLox
         public Grouping(Expr expression)
         {
             Left = expression;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitGroupingExpr(this);
         }
     }
 
@@ -33,6 +52,11 @@ namespace CSLox
         {
             Value = value;
         }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitLiteralExpr(this);
+        }
     }
 
     public class Unary : Expr
@@ -41,6 +65,11 @@ namespace CSLox
         {
             Operator = op;
             Right = right;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitUnaryExpr(this);
         }
     }
 }
