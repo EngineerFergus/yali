@@ -17,7 +17,7 @@ namespace GenerateAst
             {
                 "Binary   : Expr left > Left, Token op > Operator, Expr right > Right",
                 "Grouping : Expr expression > Left",
-                "Literal  : object value > Value",
+                "Literal  : object? value > Value",
                 "Unary    : Token op > Operator, Expr right > Right"
             });
         }

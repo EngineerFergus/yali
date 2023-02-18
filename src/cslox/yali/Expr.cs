@@ -48,7 +48,7 @@ namespace CSLox
 
     public class Literal : Expr
     {
-        public Literal(object value)
+        public Literal(object? value)
         {
             Value = value;
         }
