@@ -16,7 +16,7 @@ namespace GenerateAst
             DefineAst(outputDir, "Expr", new List<string>()
             {
                 "Binary   : Expr left > Left, Token op > Operator, Expr right > Right",
-                "Grouping : Expr expression > Left",
+                "Grouping : Expr expression > Expression",
                 "Literal  : object? value > Value",
                 "Unary    : Token op > Operator, Expr right > Right"
             });
@@ -34,10 +34,10 @@ namespace GenerateAst
             builder.AppendLine($"    public abstract class {baseName}");
             builder.AppendLine("    {");
 
-            builder.AppendLine("        public Expr? Left { get; init; }");
-            builder.AppendLine("        public Token? Operator { get; init; }");
-            builder.AppendLine("        public Expr? Right { get; init; }");
-            builder.AppendLine("        public object? Value { get; init; }");
+            //builder.AppendLine("        public Expr? Left { get; init; }");
+            //builder.AppendLine("        public Token? Operator { get; init; }");
+            //builder.AppendLine("        public Expr? Right { get; init; }");
+            //builder.AppendLine("        public object? Value { get; init; }");
             builder.AppendLine("        public abstract T Accept<T>(IVisitor<T> visitor);");
 
             builder.AppendLine("    }");
@@ -90,6 +90,13 @@ namespace GenerateAst
 
             builder.AppendLine($"    public class {className} : {baseName}");
             builder.AppendLine("    {");
+
+            foreach (FieldContainer f in fields)
+            {
+                builder.AppendLine($"        public {f.FieldType} {f.MemberName} {{ get; }}");
+            }
+
+            builder.AppendLine();
             builder.AppendLine($"        public {className}({initList})");
             builder.AppendLine("        {");
 

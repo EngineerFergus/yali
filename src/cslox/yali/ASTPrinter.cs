@@ -25,7 +25,7 @@ namespace CSLox
 
         public string VisitGroupingExpr(Grouping grouping)
         {
-            return Paranthesize("group", grouping.Left);
+            return Paranthesize("group", grouping.Expression);
         }
 
         public string VisitLiteralExpr(Literal literal)

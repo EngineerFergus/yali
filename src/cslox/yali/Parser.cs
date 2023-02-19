@@ -2,7 +2,7 @@
 {
     public class Parser
     {
-        private class ParseException : SystemException { }
+        private class ParseError : SystemException { }
 
         private readonly List<Token> _Tokens;
         private int _Current = 0;
@@ -177,10 +177,10 @@
             return _Tokens[_Current - 1];
         }
 
-        private ParseException Error(Token token, string message)
+        private ParseError Error(Token token, string message)
         {
             Lox.Error(token, message);
-            return new ParseException();
+            return new ParseError();
         }
 
         private void Synchronize()

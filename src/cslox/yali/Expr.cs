@@ -3,10 +3,6 @@ namespace CSLox
 {
     public abstract class Expr
     {
-        public Expr? Left { get; init; }
-        public Token? Operator { get; init; }
-        public Expr? Right { get; init; }
-        public object? Value { get; init; }
         public abstract T Accept<T>(IVisitor<T> visitor);
     }
 
@@ -20,6 +16,10 @@ namespace CSLox
 
     public class Binary : Expr
     {
+        public Expr Left { get; }
+        public Token Operator { get; }
+        public Expr Right { get; }
+
         public Binary(Expr left, Token op, Expr right)
         {
             Left = left;
@@ -35,9 +35,11 @@ namespace CSLox
 
     public class Grouping : Expr
     {
+        public Expr Expression { get; }
+
         public Grouping(Expr expression)
         {
-            Left = expression;
+            Expression = expression;
         }
 
         public override T Accept<T>(IVisitor<T> visitor)
@@ -48,6 +50,8 @@ namespace CSLox
 
     public class Literal : Expr
     {
+        public object? Value { get; }
+
         public Literal(object? value)
         {
             Value = value;
@@ -61,6 +65,9 @@ namespace CSLox
 
     public class Unary : Expr
     {
+        public Token Operator { get; }
+        public Expr Right { get; }
+
         public Unary(Token op, Expr right)
         {
             Operator = op;
