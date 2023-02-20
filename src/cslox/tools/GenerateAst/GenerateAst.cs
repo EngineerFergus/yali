@@ -24,9 +24,9 @@ namespace GenerateAst
 
             DefineAst(outputDir, "Stmt", new List<string>()
             {
-                "ExprStmt  : Expr expr > Expr",
-                "PrintStmt : Expr expr > Expr",
-                "Var       : Token name > Name, Expr initializer > Initializer",
+                "Expression  : Expr expr > Expr",
+                "Print : Expr expr > Expr",
+                "Var       : Token name > Name, Expr? initializer > Initializer",
             });
         }
 
@@ -41,8 +41,7 @@ namespace GenerateAst
 
             builder.AppendLine($"    public abstract class {baseName}");
             builder.AppendLine("    {");
-            builder.AppendLine($"        public abstract T Accept<T>(I{baseName}Visitor<T> visitor);");
-            builder.AppendLine("    }");
+            builder.AppendLine($"        public abstract T Accept<T>(IVisitor<T> visitor);");
 
             DefineVisitor(builder, baseName, types);
 
@@ -55,6 +54,7 @@ namespace GenerateAst
                 DefineType(builder, baseName, className, fieldList);
             }
 
+            builder.AppendLine("    }");
             builder.AppendLine("}");
             File.WriteAllText(path, builder.ToString());
         }
@@ -62,17 +62,17 @@ namespace GenerateAst
         private static void DefineVisitor(StringBuilder builder, string baseName, List<string> types)
         {
             builder.AppendLine();
-            builder.AppendLine($"    public interface I{baseName}Visitor<T>");
-            builder.AppendLine("    {");
+            builder.AppendLine($"        public interface IVisitor<T>");
+            builder.AppendLine("        {");
 
             foreach (string type in types)
             {
                 string[] splits = type.Split(':');
                 string className = splits[0].Trim();
-                builder.AppendLine($"        T Visit{className}{baseName}({className} {className.ToLower()});");
+                builder.AppendLine($"            T Visit{className}({className} {className.ToLower()});");
             }
 
-            builder.AppendLine("    }");
+            builder.AppendLine("        }");
         }
 
         private static void DefineType(StringBuilder builder, string baseName, string className, string fieldList)
@@ -90,32 +90,32 @@ namespace GenerateAst
 
             string initList = initializerList.ToString().Trim().Trim(',');
 
-            builder.AppendLine($"    public class {className} : {baseName}");
-            builder.AppendLine("    {");
+            builder.AppendLine($"        public class {className} : {baseName}");
+            builder.AppendLine("        {");
 
             foreach (FieldContainer f in fields)
             {
-                builder.AppendLine($"        public {f.FieldType} {f.MemberName} {{ get; }}");
+                builder.AppendLine($"            public {f.FieldType} {f.MemberName} {{ get; }}");
             }
 
             builder.AppendLine();
-            builder.AppendLine($"        public {className}({initList})");
-            builder.AppendLine("        {");
+            builder.AppendLine($"            public {className}({initList})");
+            builder.AppendLine("            {");
 
             foreach (FieldContainer field in fields)
             {
-                builder.AppendLine($"            {field.MemberName} = {field.ParamName};");
+                builder.AppendLine($"                {field.MemberName} = {field.ParamName};");
             }
 
-            builder.AppendLine("        }");
+            builder.AppendLine("            }");
 
             // Visitor pattern
             builder.AppendLine();
-            builder.AppendLine($"        public override T Accept<T>(I{baseName}Visitor<T> visitor)");
-            builder.AppendLine("        {");
-            builder.AppendLine($"            return visitor.Visit{className}{baseName}(this);");
+            builder.AppendLine($"            public override T Accept<T>(IVisitor<T> visitor)");
+            builder.AppendLine("            {");
+            builder.AppendLine($"               return visitor.Visit{className}(this);");
+            builder.AppendLine("            }");
             builder.AppendLine("        }");
-            builder.AppendLine("    }");
         }
     }
 }

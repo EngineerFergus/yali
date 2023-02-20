@@ -3,60 +3,60 @@ namespace CSLox
 {
     public abstract class Stmt
     {
-        public abstract T Accept<T>(IStmtVisitor<T> visitor);
-    }
+        public abstract T Accept<T>(IVisitor<T> visitor);
 
-    public interface IStmtVisitor<T>
-    {
-        T VisitExprStmtStmt(ExprStmt exprstmt);
-        T VisitPrintStmtStmt(PrintStmt printstmt);
-        T VisitVarStmt(Var var);
-    }
-
-    public class ExprStmt : Stmt
-    {
-        public Expr Expr { get; }
-
-        public ExprStmt(Expr expr)
+        public interface IVisitor<T>
         {
-            Expr = expr;
+            T VisitExpression(Expression expression);
+            T VisitPrint(Print print);
+            T VisitVar(Var var);
         }
 
-        public override T Accept<T>(IStmtVisitor<T> visitor)
+        public class Expression : Stmt
         {
-            return visitor.VisitExprStmtStmt(this);
-        }
-    }
+            public Expr Expr { get; }
 
-    public class PrintStmt : Stmt
-    {
-        public Expr Expr { get; }
+            public Expression(Expr expr)
+            {
+                Expr = expr;
+            }
 
-        public PrintStmt(Expr expr)
-        {
-            Expr = expr;
-        }
-
-        public override T Accept<T>(IStmtVisitor<T> visitor)
-        {
-            return visitor.VisitPrintStmtStmt(this);
-        }
-    }
-
-    public class Var : Stmt
-    {
-        public Token Name { get; }
-        public Expr Initializer { get; }
-
-        public Var(Token name, Expr initializer)
-        {
-            Name = name;
-            Initializer = initializer;
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitExpression(this);
+            }
         }
 
-        public override T Accept<T>(IStmtVisitor<T> visitor)
+        public class Print : Stmt
         {
-            return visitor.VisitVarStmt(this);
+            public Expr Expr { get; }
+
+            public Print(Expr expr)
+            {
+                Expr = expr;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitPrint(this);
+            }
+        }
+
+        public class Var : Stmt
+        {
+            public Token Name { get; }
+            public Expr? Initializer { get; }
+
+            public Var(Token name, Expr? initializer)
+            {
+                Name = name;
+                Initializer = initializer;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitVar(this);
+            }
         }
     }
 }

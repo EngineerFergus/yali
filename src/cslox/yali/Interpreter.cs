@@ -1,15 +1,18 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace CSLox
+﻿namespace CSLox
 {
-    internal class Interpreter : IExprVisitor<object?>, IStmtVisitor<Void>
+    internal class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<Void>
     {
-        public void Interpret(List<Stmt> statements)
+        public void Interpret(List<Stmt?> statements)
         {
             try
             {
                 foreach (var stmt in statements) 
                 {
+                    if (stmt == null)
+                    {
+                        throw new RuntimeError(new Token(TokenType.NIL, "nil", null, 0),
+                            "Encountered a null statement in interpreter.");
+                    }
                     Execute(stmt);
                 }
             }
@@ -24,7 +27,7 @@ namespace CSLox
             stmt.Accept(this);
         }
 
-        public object? VisitBinaryExpr(Binary binary)
+        public object? VisitBinary(Expr.Binary binary)
         {
             object? left = Evaluate(binary.Left);
             object? right = Evaluate(binary.Right);
@@ -73,17 +76,17 @@ namespace CSLox
             return null;
         }
 
-        public object? VisitGroupingExpr(Grouping grouping)
+        public object? VisitGrouping(Expr.Grouping grouping)
         {
             return Evaluate(grouping.Expression);
         }
 
-        public object? VisitLiteralExpr(Literal literal)
+        public object? VisitLiteral(Expr.Literal literal)
         {
             return literal.Value;
         }
 
-        public object? VisitUnaryExpr(Unary unary)
+        public object? VisitUnary(Expr.Unary unary)
         {
             object? right = Evaluate(unary.Right);
 
@@ -153,17 +156,27 @@ namespace CSLox
             return expr.Accept(this);
         }
 
-        public Void VisitExprStmtStmt(ExprStmt exprstmt)
+        public Void VisitExpression(Stmt.Expression exprstmt)
         {
             _ = Evaluate(exprstmt.Expr);
             return new Void();
         }
 
-        public Void VisitPrintStmtStmt(PrintStmt printstmt)
+        public Void VisitPrint(Stmt.Print printstmt)
         {
             object? value = Evaluate(printstmt.Expr);
             Console.WriteLine(Stringify(value));
             return new Void();
+        }
+
+        public object? VisitVariable(Expr.Variable variable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Void VisitVar(Stmt.Var var)
+        {
+            throw new NotImplementedException();
         }
     }
 }

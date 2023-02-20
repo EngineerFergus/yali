@@ -3,96 +3,96 @@ namespace CSLox
 {
     public abstract class Expr
     {
-        public abstract T Accept<T>(IExprVisitor<T> visitor);
-    }
+        public abstract T Accept<T>(IVisitor<T> visitor);
 
-    public interface IExprVisitor<T>
-    {
-        T VisitBinaryExpr(Binary binary);
-        T VisitGroupingExpr(Grouping grouping);
-        T VisitLiteralExpr(Literal literal);
-        T VisitUnaryExpr(Unary unary);
-        T VisitVariableExpr(Variable variable);
-    }
-
-    public class Binary : Expr
-    {
-        public Expr Left { get; }
-        public Token Operator { get; }
-        public Expr Right { get; }
-
-        public Binary(Expr left, Token op, Expr right)
+        public interface IVisitor<T>
         {
-            Left = left;
-            Operator = op;
-            Right = right;
+            T VisitBinary(Binary binary);
+            T VisitGrouping(Grouping grouping);
+            T VisitLiteral(Literal literal);
+            T VisitUnary(Unary unary);
+            T VisitVariable(Variable variable);
         }
 
-        public override T Accept<T>(IExprVisitor<T> visitor)
+        public class Binary : Expr
         {
-            return visitor.VisitBinaryExpr(this);
-        }
-    }
+            public Expr Left { get; }
+            public Token Operator { get; }
+            public Expr Right { get; }
 
-    public class Grouping : Expr
-    {
-        public Expr Expression { get; }
+            public Binary(Expr left, Token op, Expr right)
+            {
+                Left = left;
+                Operator = op;
+                Right = right;
+            }
 
-        public Grouping(Expr expression)
-        {
-            Expression = expression;
-        }
-
-        public override T Accept<T>(IExprVisitor<T> visitor)
-        {
-            return visitor.VisitGroupingExpr(this);
-        }
-    }
-
-    public class Literal : Expr
-    {
-        public object? Value { get; }
-
-        public Literal(object? value)
-        {
-            Value = value;
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitBinary(this);
+            }
         }
 
-        public override T Accept<T>(IExprVisitor<T> visitor)
+        public class Grouping : Expr
         {
-            return visitor.VisitLiteralExpr(this);
-        }
-    }
+            public Expr Expression { get; }
 
-    public class Unary : Expr
-    {
-        public Token Operator { get; }
-        public Expr Right { get; }
+            public Grouping(Expr expression)
+            {
+                Expression = expression;
+            }
 
-        public Unary(Token op, Expr right)
-        {
-            Operator = op;
-            Right = right;
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitGrouping(this);
+            }
         }
 
-        public override T Accept<T>(IExprVisitor<T> visitor)
+        public class Literal : Expr
         {
-            return visitor.VisitUnaryExpr(this);
+            public object? Value { get; }
+
+            public Literal(object? value)
+            {
+                Value = value;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitLiteral(this);
+            }
         }
-    }
 
-    public class Variable : Expr
-    {
-        public Token Name { get; }
-
-        public Variable(Token name)
+        public class Unary : Expr
         {
-            Name = name;
+            public Token Operator { get; }
+            public Expr Right { get; }
+
+            public Unary(Token op, Expr right)
+            {
+                Operator = op;
+                Right = right;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitUnary(this);
+            }
         }
 
-        public override T Accept<T>(IExprVisitor<T> visitor)
+        public class Variable : Expr
         {
-            return visitor.VisitVariableExpr(this);
+            public Token Name { get; }
+
+            public Variable(Token name)
+            {
+                Name = name;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitVariable(this);
+            }
         }
     }
 }

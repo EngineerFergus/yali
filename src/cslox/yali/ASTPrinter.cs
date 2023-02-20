@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace CSLox
 {
-    internal class ASTPrinter : IExprVisitor<string>
+    internal class ASTPrinter : Expr.IVisitor<string>
     {
         public string Print(Expr? expr)
         {
@@ -18,29 +14,34 @@ namespace CSLox
             return expr.Accept(this);
         }
 
-        public string VisitBinaryExpr(Binary binary)
+        public string VisitBinary(Expr.Binary binary)
         {
             return Paranthesize(binary.Operator.Lexeme, binary.Left, binary.Right);
         }
 
-        public string VisitGroupingExpr(Grouping grouping)
+        public string VisitGrouping(Expr.Grouping grouping)
         {
             return Paranthesize("group", grouping.Expression);
         }
 
-        public string VisitLiteralExpr(Literal literal)
+        public string VisitLiteral(Expr.Literal literal)
         {
             if (literal.Value == null)
             {
                 return "nil";
             }
 
-            return literal.Value.ToString();
+            return literal.Value.ToString() ?? "nil";
         }
 
-        public string VisitUnaryExpr(Unary unary)
+        public string VisitUnary(Expr.Unary unary)
         {
             return Paranthesize(unary.Operator.Lexeme, unary.Right);
+        }
+
+        public string VisitVariable(Expr.Variable variable)
+        {
+            throw new NotImplementedException();
         }
 
         private string Paranthesize(string name, params Expr[] exprs)

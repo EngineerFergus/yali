@@ -40,7 +40,7 @@
 
                 return Statement();
             }
-            catch (ParseError error)
+            catch (ParseError)
             {
                 Synchronize();
                 return null;
@@ -61,7 +61,7 @@
         {
             Expr value = Expression();
             Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
-            return new PrintStmt(value);
+            return new Stmt.Print(value);
         }
 
         private Stmt VarDeclaration()
@@ -76,14 +76,14 @@
             }
 
             Consume(TokenType.SEMICOLON, "Expect \':\' after variable declaration");
-            return new Var(name, initializer);
+            return new Stmt.Var(name, initializer);
         }
 
         private Stmt ExpressionStatement()
         {
             Expr value = Expression();
             Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
-            return new ExprStmt(value);
+            return new Stmt.Expression(value);
         }
 
         private Expr Equality()
@@ -94,7 +94,7 @@
             {
                 Token optr = Previous();
                 Expr right = ComparisonExpr();
-                expr = new Binary(expr, optr, right);
+                expr = new Expr.Binary(expr, optr, right);
             }
 
             return expr;
@@ -108,7 +108,7 @@
             {
                 Token optr = Previous();
                 Expr right = Term();
-                expr = new Binary(expr, optr, right);
+                expr = new Expr.Binary(expr, optr, right);
             }
 
             return expr;
@@ -122,7 +122,7 @@
             {
                 Token op = Previous();
                 Expr right = Factor();
-                expr = new Binary(expr, op, right);
+                expr = new Expr.Binary(expr, op, right);
             }
 
             return expr;
@@ -136,7 +136,7 @@
             {
                 Token op = Previous();
                 Expr right = UnaryExpr();
-                expr = new Binary(expr, op, right);
+                expr = new Expr.Binary(expr, op, right);
             }
 
             return expr;
@@ -148,7 +148,7 @@
             {
                 Token op = Previous();
                 Expr right = UnaryExpr();
-                return new Unary(op, right);
+                return new Expr.Unary(op, right);
             }
 
             return Primary();
@@ -156,25 +156,25 @@
 
         private Expr Primary()
         {
-            if (Match(TokenType.FALSE)) { return new Literal(false); }
-            if (Match(TokenType.TRUE)) { return new Literal(true); }
-            if (Match(TokenType.NIL)) { return new Literal(null); }
+            if (Match(TokenType.FALSE)) { return new Expr.Literal(false); }
+            if (Match(TokenType.TRUE)) { return new Expr.Literal(true); }
+            if (Match(TokenType.NIL)) { return new Expr.Literal(null); }
 
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
-                return new Literal(Previous().Literal);
+                return new Expr.Literal(Previous().Literal);
             }
 
             if (Match(TokenType.IDENTIFIER))
             {
-                return new Variable(Previous());
+                return new Expr.Variable(Previous());
             }
 
             if (Match(TokenType.LEFT_PAREN))
             {
                 Expr expr = Expression();
                 Consume(TokenType.RIGHT_PAREN, "Expect \')\' after expression.");
-                return new Grouping(expr);
+                return new Expr.Grouping(expr);
             }
 
             throw new NotImplementedException();
