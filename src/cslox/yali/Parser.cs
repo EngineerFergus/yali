@@ -12,21 +12,45 @@
             _Tokens = tokens;
         }
 
-        public Expr? Parse()
+        public List<Stmt> Parse()
         {
-            try
+            List<Stmt> statements = new();
+
+            while (!IsAtEnd())
             {
-                return Expression();
+                statements.Add(Statement());
             }
-            catch
-            {
-                return null;
-            }
+
+            return statements;
         }
 
         private Expr Expression()
         {
             return Equality();
+        }
+
+        private Stmt Statement()
+        {
+            if (Match(TokenType.PRINT))
+            {
+                return PrintStatement();
+            }
+
+            return ExpressionStatement();
+        }
+
+        private Stmt PrintStatement()
+        {
+            Expr value = Expression();
+            Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
+            return new PrintStmt(value);
+        }
+
+        private Stmt ExpressionStatement()
+        {
+            Expr value = Expression();
+            Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
+            return new ExprStmt(value);
         }
 
         private Expr Equality()

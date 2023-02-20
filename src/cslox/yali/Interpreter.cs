@@ -1,23 +1,27 @@
-﻿namespace CSLox
+﻿using System.Runtime.CompilerServices;
+
+namespace CSLox
 {
-    internal class Interpreter : IVisitor<object?>
+    internal class Interpreter : IExprVisitor<object?>, IStmtVisitor<Void>
     {
-        public void Interpret(Expr? expression)
+        public void Interpret(List<Stmt> statements)
         {
             try
             {
-                if (expression == null)
+                foreach (var stmt in statements) 
                 {
-                    throw new RuntimeError(new Token(TokenType.NIL, "nil", null, 0), "Null expression provided " +
-                        "to interpreter.");
+                    Execute(stmt);
                 }
-                object? value = Evaluate(expression);
-                Console.WriteLine(Stringify(value));
             }
             catch (RuntimeError error)
             {
                 Lox.RuntimeError(error);
             }
+        }
+
+        private void Execute(Stmt stmt)
+        {
+            stmt.Accept(this);
         }
 
         public object? VisitBinaryExpr(Binary binary)
@@ -147,6 +151,19 @@
         private object? Evaluate(Expr expr)
         {
             return expr.Accept(this);
+        }
+
+        public Void VisitExprStmtStmt(ExprStmt exprstmt)
+        {
+            _ = Evaluate(exprstmt.Expr);
+            return new Void();
+        }
+
+        public Void VisitPrintStmtStmt(PrintStmt printstmt)
+        {
+            object? value = Evaluate(printstmt.Expr);
+            Console.WriteLine(Stringify(value));
+            return new Void();
         }
     }
 }

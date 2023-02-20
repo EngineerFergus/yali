@@ -3,10 +3,10 @@ namespace CSLox
 {
     public abstract class Expr
     {
-        public abstract T Accept<T>(IVisitor<T> visitor);
+        public abstract T Accept<T>(IExprVisitor<T> visitor);
     }
 
-    public interface IVisitor<T>
+    public interface IExprVisitor<T>
     {
         T VisitBinaryExpr(Binary binary);
         T VisitGroupingExpr(Grouping grouping);
@@ -27,7 +27,7 @@ namespace CSLox
             Right = right;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExprVisitor<T> visitor)
         {
             return visitor.VisitBinaryExpr(this);
         }
@@ -42,7 +42,7 @@ namespace CSLox
             Expression = expression;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExprVisitor<T> visitor)
         {
             return visitor.VisitGroupingExpr(this);
         }
@@ -57,7 +57,7 @@ namespace CSLox
             Value = value;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExprVisitor<T> visitor)
         {
             return visitor.VisitLiteralExpr(this);
         }
@@ -74,7 +74,7 @@ namespace CSLox
             Right = right;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExprVisitor<T> visitor)
         {
             return visitor.VisitUnaryExpr(this);
         }

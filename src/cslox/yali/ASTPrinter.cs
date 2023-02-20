@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSLox
 {
-    internal class ASTPrinter : IVisitor<string>
+    internal class ASTPrinter : IExprVisitor<string>
     {
         public string Print(Expr? expr)
         {

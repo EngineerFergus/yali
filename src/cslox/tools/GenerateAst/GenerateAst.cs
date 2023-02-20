@@ -20,6 +20,12 @@ namespace GenerateAst
                 "Literal  : object? value > Value",
                 "Unary    : Token op > Operator, Expr right > Right"
             });
+
+            DefineAst(outputDir, "Stmt", new List<string>()
+            {
+                "ExprStmt  : Expr expr > Expr",
+                "PrintStmt : Expr expr > Expr",
+            });
         }
 
         private static void DefineAst(string outputDir, string baseName, List<string> types)
@@ -33,13 +39,7 @@ namespace GenerateAst
 
             builder.AppendLine($"    public abstract class {baseName}");
             builder.AppendLine("    {");
-
-            //builder.AppendLine("        public Expr? Left { get; init; }");
-            //builder.AppendLine("        public Token? Operator { get; init; }");
-            //builder.AppendLine("        public Expr? Right { get; init; }");
-            //builder.AppendLine("        public object? Value { get; init; }");
-            builder.AppendLine("        public abstract T Accept<T>(IVisitor<T> visitor);");
-
+            builder.AppendLine($"        public abstract T Accept<T>(I{baseName}Visitor<T> visitor);");
             builder.AppendLine("    }");
 
             DefineVisitor(builder, baseName, types);
@@ -60,7 +60,7 @@ namespace GenerateAst
         private static void DefineVisitor(StringBuilder builder, string baseName, List<string> types)
         {
             builder.AppendLine();
-            builder.AppendLine("    public interface IVisitor<T>");
+            builder.AppendLine($"    public interface I{baseName}Visitor<T>");
             builder.AppendLine("    {");
 
             foreach (string type in types)
@@ -109,7 +109,7 @@ namespace GenerateAst
 
             // Visitor pattern
             builder.AppendLine();
-            builder.AppendLine("        public override T Accept<T>(IVisitor<T> visitor)");
+            builder.AppendLine($"        public override T Accept<T>(I{baseName}Visitor<T> visitor)");
             builder.AppendLine("        {");
             builder.AppendLine($"            return visitor.Visit{className}{baseName}(this);");
             builder.AppendLine("        }");

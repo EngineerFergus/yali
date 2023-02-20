@@ -60,11 +60,11 @@ namespace CSLox
             Scanner scanner = new(source);
             List<Token> tokens = scanner.ScanTokens();
             Parser parser = new(tokens);
-            Expr? expr = parser.Parse();
+            List<Stmt> statements = parser.Parse();
 
             if (_HadError) { return; }
 
-            _Interpreter.Interpret(expr);
+            _Interpreter.Interpret(statements);
         }
 
         public static void Error(int line, string message)
