@@ -10,6 +10,7 @@ namespace CSLox
     {
         T VisitExprStmtStmt(ExprStmt exprstmt);
         T VisitPrintStmtStmt(PrintStmt printstmt);
+        T VisitVarStmt(Var var);
     }
 
     public class ExprStmt : Stmt
@@ -39,6 +40,23 @@ namespace CSLox
         public override T Accept<T>(IStmtVisitor<T> visitor)
         {
             return visitor.VisitPrintStmtStmt(this);
+        }
+    }
+
+    public class Var : Stmt
+    {
+        public Token Name { get; }
+        public Expr Initializer { get; }
+
+        public Var(Token name, Expr initializer)
+        {
+            Name = name;
+            Initializer = initializer;
+        }
+
+        public override T Accept<T>(IStmtVisitor<T> visitor)
+        {
+            return visitor.VisitVarStmt(this);
         }
     }
 }

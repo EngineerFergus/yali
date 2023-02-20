@@ -12,13 +12,13 @@
             _Tokens = tokens;
         }
 
-        public List<Stmt> Parse()
+        public List<Stmt?> Parse()
         {
-            List<Stmt> statements = new();
+            List<Stmt?> statements = new();
 
             while (!IsAtEnd())
             {
-                statements.Add(Statement());
+                statements.Add(Declaration());
             }
 
             return statements;
@@ -27,6 +27,24 @@
         private Expr Expression()
         {
             return Equality();
+        }
+
+        private Stmt? Declaration()
+        {
+            try
+            {
+                if (Match(TokenType.VAR))
+                {
+                    return VarDeclaration();
+                }
+
+                return Statement();
+            }
+            catch (ParseError error)
+            {
+                Synchronize();
+                return null;
+            }
         }
 
         private Stmt Statement()
@@ -44,6 +62,21 @@
             Expr value = Expression();
             Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
             return new PrintStmt(value);
+        }
+
+        private Stmt VarDeclaration()
+        {
+            Token name = Consume(TokenType.IDENTIFIER, "Expected variable name");
+
+            Expr? initializer = null;
+
+            if (Match(TokenType.EQUAL))
+            {
+                initializer = Expression();
+            }
+
+            Consume(TokenType.SEMICOLON, "Expect \':\' after variable declaration");
+            return new Var(name, initializer);
         }
 
         private Stmt ExpressionStatement()
@@ -130,6 +163,11 @@
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
                 return new Literal(Previous().Literal);
+            }
+
+            if (Match(TokenType.IDENTIFIER))
+            {
+                return new Variable(Previous());
             }
 
             if (Match(TokenType.LEFT_PAREN))

@@ -12,6 +12,7 @@ namespace CSLox
         T VisitGroupingExpr(Grouping grouping);
         T VisitLiteralExpr(Literal literal);
         T VisitUnaryExpr(Unary unary);
+        T VisitVariableExpr(Variable variable);
     }
 
     public class Binary : Expr
@@ -77,6 +78,21 @@ namespace CSLox
         public override T Accept<T>(IExprVisitor<T> visitor)
         {
             return visitor.VisitUnaryExpr(this);
+        }
+    }
+
+    public class Variable : Expr
+    {
+        public Token Name { get; }
+
+        public Variable(Token name)
+        {
+            Name = name;
+        }
+
+        public override T Accept<T>(IExprVisitor<T> visitor)
+        {
+            return visitor.VisitVariableExpr(this);
         }
     }
 }
