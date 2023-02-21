@@ -15,6 +15,7 @@ namespace GenerateAst
             string outputDir = args[0];
             DefineAst(outputDir, "Expr", new List<string>()
             {
+                "Assign   : Token name > Name, Expr value > Value",
                 "Binary   : Expr left > Left, Token op > Operator, Expr right > Right",
                 "Grouping : Expr expression > Expression",
                 "Literal  : object? value > Value",

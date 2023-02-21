@@ -7,11 +7,29 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
+            T VisitAssign(Assign assign);
             T VisitBinary(Binary binary);
             T VisitGrouping(Grouping grouping);
             T VisitLiteral(Literal literal);
             T VisitUnary(Unary unary);
             T VisitVariable(Variable variable);
+        }
+
+        public class Assign : Expr
+        {
+            public Token Name { get; }
+            public Expr Value { get; }
+
+            public Assign(Token name, Expr value)
+            {
+                Name = name;
+                Value = value;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitAssign(this);
+            }
         }
 
         public class Binary : Expr
