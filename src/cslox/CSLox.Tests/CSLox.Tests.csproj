@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\yali\CSLox.csproj" />
+    <ProjectReference Include="..\CSLox\CSLox.csproj" />
   </ItemGroup>
 
 </Project>

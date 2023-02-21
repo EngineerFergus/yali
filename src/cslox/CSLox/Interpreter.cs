@@ -2,6 +2,8 @@
 {
     internal class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<Void>
     {
+        private Environment _Environment = new();
+
         public void Interpret(List<Stmt?> statements)
         {
             try
@@ -171,12 +173,20 @@
 
         public object? VisitVariable(Expr.Variable variable)
         {
-            throw new NotImplementedException();
+            return _Environment.Get(variable.Name);
         }
 
         public Void VisitVar(Stmt.Var var)
         {
-            throw new NotImplementedException();
+            object? value = null;
+
+            if (var.Initializer != null)
+            {
+                value = Evaluate(var.Initializer);
+            }
+
+            _Environment.Define(var.Name.Lexeme, value);
+            return new Void();
         }
     }
 }

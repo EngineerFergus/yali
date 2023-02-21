@@ -13,7 +13,7 @@ namespace CSLox
             if (args.Length > 1)
             {
                 Console.WriteLine("Usage: cslox [script]");
-                Environment.Exit(64);
+                System.Environment.Exit(64);
             }
             else if (args.Length == 1)
             {
@@ -31,12 +31,12 @@ namespace CSLox
             Run(Encoding.Default.GetString(bytes));
             if (_HadError)
             {
-                Environment.Exit(65);
+                System.Environment.Exit(65);
             }
 
             if (_HadRuntimeError)
             {
-                Environment.Exit(70);
+                System.Environment.Exit(70);
             }
         }
 
