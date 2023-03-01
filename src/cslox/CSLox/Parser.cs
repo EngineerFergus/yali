@@ -26,7 +26,7 @@
 
         private Expr Expression()
         {
-            return Equality();
+            return Assignment();
         }
 
         private Stmt? Declaration()
@@ -75,7 +75,7 @@
                 initializer = Expression();
             }
 
-            Consume(TokenType.SEMICOLON, "Expect \':\' after variable declaration");
+            Consume(TokenType.SEMICOLON, "Expect \';\' after variable declaration");
             return new Stmt.Var(name, initializer);
         }
 
@@ -84,6 +84,27 @@
             Expr value = Expression();
             Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
             return new Stmt.Expression(value);
+        }
+
+        private Expr Assignment()
+        {
+            Expr expr = Equality();
+
+            if (Match(TokenType.EQUAL))
+            {
+                Token equals = Previous();
+                Expr value = Assignment();
+
+                if (expr is Expr.Variable variable)
+                {
+                    Token name = variable.Name;
+                    return new Expr.Assign(name, value);
+                }
+
+                Error(equals, "Invalid assignment target.");
+            }
+
+            return expr;
         }
 
         private Expr Equality()

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CSLox
+﻿namespace CSLox
 {
     public class Environment
     {
@@ -31,6 +25,17 @@ namespace CSLox
             }
 
             throw new RuntimeError(name, $"Undefined variable \'{name.Lexeme}\'.");
+        }
+
+        public void Assign(Token name, object? value)
+        {
+            if (_Values.ContainsKey(name.Lexeme))
+            {
+                _Values[name.Lexeme] = value;
+                return;
+            }
+
+            throw new RuntimeError(name, $"Undefined variable '{name.Lexeme}'.");
         }
     }
 }

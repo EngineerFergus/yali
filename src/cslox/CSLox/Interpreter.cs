@@ -188,5 +188,12 @@
             _Environment.Define(var.Name.Lexeme, value);
             return new Void();
         }
+
+        public object? VisitAssignExpr(Expr.Assign expr)
+        {
+            object? value = Evaluate(expr.Value);
+            _Environment.Assign(expr.Name, value);
+            return value;
+        }
     }
 }
