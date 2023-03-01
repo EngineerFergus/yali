@@ -11,8 +11,8 @@ namespace GenerateAst.Tests
     public  class FieldContainerTests
     {
         [DataTestMethod]
-        [DataRow("int i > I", "int", "i", "I")]
-        [DataRow("  int i  > I  ", "int", "i", "I")]
+        [DataRow("int i | I", "int", "i", "I")]
+        [DataRow("  int i  | I  ", "int", "i", "I")]
         public void ParsesCorrectly(string source, string fieldType, string paramName, string memberName)
         {
             var parsed = FieldContainer.Parse(source);

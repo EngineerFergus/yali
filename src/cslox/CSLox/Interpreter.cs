@@ -29,6 +29,37 @@
             stmt.Accept(this);
         }
 
+        private void ExecuteBlock(List<Stmt?> statements, Environment environment)
+        {
+            Environment previous = _Environment;
+
+            try
+            {
+                _Environment = environment;
+
+                foreach (var stmt in statements)
+                {
+                    if (stmt == null)
+                    {
+                        throw new RuntimeError(new Token(TokenType.NIL, "nil", null, 0),
+                            "Encountered a null statement in interpreter.");
+                    }
+
+                    Execute(stmt);
+                }
+            }
+            finally
+            {
+                _Environment = previous;
+            }
+        }
+
+        public Void VisitBlockStmt(Stmt.Block stmt)
+        {
+            ExecuteBlock(stmt.Statements, new Environment(_Environment));
+            return new Void();
+        }
+
         public object? VisitBinaryExpr(Expr.Binary binary)
         {
             object? left = Evaluate(binary.Left);

@@ -7,9 +7,25 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
+            T VisitBlockStmt(Block block);
             T VisitExpressionStmt(Expression expression);
             T VisitPrintStmt(Print print);
             T VisitVarStmt(Var var);
+        }
+
+        public class Block : Stmt
+        {
+            public List<Stmt?> Statements { get; }
+
+            public Block(List<Stmt?> statements)
+            {
+                Statements = statements;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitBlockStmt(this);
+            }
         }
 
         public class Expression : Stmt

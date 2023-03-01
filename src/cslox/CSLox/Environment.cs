@@ -2,9 +2,18 @@
 {
     public class Environment
     {
+        private readonly Environment? _Enclosing;
         private readonly Dictionary<string, object?> _Values = new();
 
-        public Environment() { }
+        public Environment()
+        {
+            _Enclosing = null;
+        }
+
+        public Environment(Environment Enclosing)
+        {
+            _Enclosing = Enclosing;
+        }
 
         public void Define(string name, object? value)
         {
@@ -24,6 +33,11 @@
                 return _Values[name.Lexeme];
             }
 
+            if (_Enclosing!= null)
+            {
+                return _Enclosing.Get(name);
+            }
+
             throw new RuntimeError(name, $"Undefined variable \'{name.Lexeme}\'.");
         }
 
@@ -32,6 +46,12 @@
             if (_Values.ContainsKey(name.Lexeme))
             {
                 _Values[name.Lexeme] = value;
+                return;
+            }
+
+            if (_Enclosing!= null)
+            {
+                _Enclosing.Assign(name, value);
                 return;
             }
 

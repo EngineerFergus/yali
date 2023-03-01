@@ -15,7 +15,7 @@
 
         public static FieldContainer Parse(string source)
         {
-            string[] splits = source.Split('>');
+            string[] splits = source.Split('|');
             string memberName = splits[1].Trim();
             string[] splits2 = splits[0].Split(' ');
             List<string> filteredSplits = new();

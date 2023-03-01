@@ -15,19 +15,20 @@ namespace GenerateAst
             string outputDir = args[0];
             DefineAst(outputDir, "Expr", new List<string>()
             {
-                "Assign   : Token name > Name, Expr value > Value",
-                "Binary   : Expr left > Left, Token op > Operator, Expr right > Right",
-                "Grouping : Expr expression > Expression",
-                "Literal  : object? value > Value",
-                "Unary    : Token op > Operator, Expr right > Right",
-                "Variable : Token name > Name",
+                "Assign   : Token name | Name, Expr value | Value",
+                "Binary   : Expr left | Left, Token op | Operator, Expr right | Right",
+                "Grouping : Expr expression | Expression",
+                "Literal  : object? value | Value",
+                "Unary    : Token op | Operator, Expr right | Right",
+                "Variable : Token name | Name",
             });
 
             DefineAst(outputDir, "Stmt", new List<string>()
             {
-                "Expression  : Expr expr > Expr",
-                "Print : Expr expr > Expr",
-                "Var       : Token name > Name, Expr? initializer > Initializer",
+                "Block       : List<Stmt?> statements | Statements",
+                "Expression  : Expr expr | Expr",
+                "Print       : Expr expr | Expr",
+                "Var         : Token name | Name, Expr? initializer | Initializer",
             });
         }
 
