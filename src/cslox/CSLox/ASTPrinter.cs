@@ -14,17 +14,22 @@ namespace CSLox
             return expr.Accept(this);
         }
 
-        public string VisitBinary(Expr.Binary binary)
+        public string VisitAssignExpr(Expr.Assign assign)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string VisitBinaryExpr(Expr.Binary binary)
         {
             return Paranthesize(binary.Operator.Lexeme, binary.Left, binary.Right);
         }
 
-        public string VisitGrouping(Expr.Grouping grouping)
+        public string VisitGroupingExpr(Expr.Grouping grouping)
         {
             return Paranthesize("group", grouping.Expression);
         }
 
-        public string VisitLiteral(Expr.Literal literal)
+        public string VisitLiteralExpr(Expr.Literal literal)
         {
             if (literal.Value == null)
             {
@@ -34,12 +39,12 @@ namespace CSLox
             return literal.Value.ToString() ?? "nil";
         }
 
-        public string VisitUnary(Expr.Unary unary)
+        public string VisitUnaryExpr(Expr.Unary unary)
         {
             return Paranthesize(unary.Operator.Lexeme, unary.Right);
         }
 
-        public string VisitVariable(Expr.Variable variable)
+        public string VisitVariableExpr(Expr.Variable variable)
         {
             throw new NotImplementedException();
         }

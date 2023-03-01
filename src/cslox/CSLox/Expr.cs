@@ -7,12 +7,12 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
-            T VisitAssign(Assign assign);
-            T VisitBinary(Binary binary);
-            T VisitGrouping(Grouping grouping);
-            T VisitLiteral(Literal literal);
-            T VisitUnary(Unary unary);
-            T VisitVariable(Variable variable);
+            T VisitAssignExpr(Assign assign);
+            T VisitBinaryExpr(Binary binary);
+            T VisitGroupingExpr(Grouping grouping);
+            T VisitLiteralExpr(Literal literal);
+            T VisitUnaryExpr(Unary unary);
+            T VisitVariableExpr(Variable variable);
         }
 
         public class Assign : Expr
@@ -28,7 +28,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitAssign(this);
+               return visitor.VisitAssignExpr(this);
             }
         }
 
@@ -47,7 +47,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitBinary(this);
+               return visitor.VisitBinaryExpr(this);
             }
         }
 
@@ -62,7 +62,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitGrouping(this);
+               return visitor.VisitGroupingExpr(this);
             }
         }
 
@@ -77,7 +77,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitLiteral(this);
+               return visitor.VisitLiteralExpr(this);
             }
         }
 
@@ -94,7 +94,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitUnary(this);
+               return visitor.VisitUnaryExpr(this);
             }
         }
 
@@ -109,7 +109,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitVariable(this);
+               return visitor.VisitVariableExpr(this);
             }
         }
     }

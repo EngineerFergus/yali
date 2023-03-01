@@ -29,7 +29,7 @@
             stmt.Accept(this);
         }
 
-        public object? VisitBinary(Expr.Binary binary)
+        public object? VisitBinaryExpr(Expr.Binary binary)
         {
             object? left = Evaluate(binary.Left);
             object? right = Evaluate(binary.Right);
@@ -78,17 +78,17 @@
             return null;
         }
 
-        public object? VisitGrouping(Expr.Grouping grouping)
+        public object? VisitGroupingExpr(Expr.Grouping grouping)
         {
             return Evaluate(grouping.Expression);
         }
 
-        public object? VisitLiteral(Expr.Literal literal)
+        public object? VisitLiteralExpr(Expr.Literal literal)
         {
             return literal.Value;
         }
 
-        public object? VisitUnary(Expr.Unary unary)
+        public object? VisitUnaryExpr(Expr.Unary unary)
         {
             object? right = Evaluate(unary.Right);
 
@@ -158,25 +158,25 @@
             return expr.Accept(this);
         }
 
-        public Void VisitExpression(Stmt.Expression exprstmt)
+        public Void VisitExpressionStmt(Stmt.Expression exprstmt)
         {
             _ = Evaluate(exprstmt.Expr);
             return new Void();
         }
 
-        public Void VisitPrint(Stmt.Print printstmt)
+        public Void VisitPrintStmt(Stmt.Print printstmt)
         {
             object? value = Evaluate(printstmt.Expr);
             Console.WriteLine(Stringify(value));
             return new Void();
         }
 
-        public object? VisitVariable(Expr.Variable variable)
+        public object? VisitVariableExpr(Expr.Variable variable)
         {
             return _Environment.Get(variable.Name);
         }
 
-        public Void VisitVar(Stmt.Var var)
+        public Void VisitVarStmt(Stmt.Var var)
         {
             object? value = null;
 

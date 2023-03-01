@@ -7,9 +7,9 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
-            T VisitExpression(Expression expression);
-            T VisitPrint(Print print);
-            T VisitVar(Var var);
+            T VisitExpressionStmt(Expression expression);
+            T VisitPrintStmt(Print print);
+            T VisitVarStmt(Var var);
         }
 
         public class Expression : Stmt
@@ -23,7 +23,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitExpression(this);
+               return visitor.VisitExpressionStmt(this);
             }
         }
 
@@ -38,7 +38,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitPrint(this);
+               return visitor.VisitPrintStmt(this);
             }
         }
 
@@ -55,7 +55,7 @@ namespace CSLox
 
             public override T Accept<T>(IVisitor<T> visitor)
             {
-               return visitor.VisitVar(this);
+               return visitor.VisitVarStmt(this);
             }
         }
     }

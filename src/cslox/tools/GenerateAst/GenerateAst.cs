@@ -70,7 +70,7 @@ namespace GenerateAst
             {
                 string[] splits = type.Split(':');
                 string className = splits[0].Trim();
-                builder.AppendLine($"            T Visit{className}({className} {className.ToLower()});");
+                builder.AppendLine($"            T Visit{className}{baseName}({className} {className.ToLower()});");
             }
 
             builder.AppendLine("        }");
@@ -114,7 +114,7 @@ namespace GenerateAst
             builder.AppendLine();
             builder.AppendLine($"            public override T Accept<T>(IVisitor<T> visitor)");
             builder.AppendLine("            {");
-            builder.AppendLine($"               return visitor.Visit{className}(this);");
+            builder.AppendLine($"               return visitor.Visit{className}{baseName}(this);");
             builder.AppendLine("            }");
             builder.AppendLine("        }");
         }
