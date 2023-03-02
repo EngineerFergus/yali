@@ -1,0 +1,10 @@
+var a = 5;
+
+if (a > 9)
+{
+    print "hit the if statement";
+}
+else
+{
+    print "hit the else statement";
+}

@@ -195,6 +195,20 @@
             return new Void();
         }
 
+        public Void VisitIfThenStmt(Stmt.IfThen stmt)
+        {
+            if (IsTruthy(Evaluate(stmt.Condition)))
+            {
+                Execute(stmt.ThenBranch);
+            }
+            else if (stmt.ElseBranch != null)
+            {
+                Execute(stmt.ElseBranch);
+            }
+
+            return new Void();
+        }
+
         public Void VisitPrintStmt(Stmt.Print printstmt)
         {
             object? value = Evaluate(printstmt.Expr);

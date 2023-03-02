@@ -9,6 +9,7 @@ namespace CSLox
         {
             T VisitBlockStmt(Block block);
             T VisitExpressionStmt(Expression expression);
+            T VisitIfThenStmt(IfThen ifthen);
             T VisitPrintStmt(Print print);
             T VisitVarStmt(Var var);
         }
@@ -40,6 +41,25 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitExpressionStmt(this);
+            }
+        }
+
+        public class IfThen : Stmt
+        {
+            public Expr Condition { get; }
+            public Stmt ThenBranch { get; }
+            public Stmt? ElseBranch { get; }
+
+            public IfThen(Expr condition, Stmt thenBranch, Stmt? elseBranch)
+            {
+                Condition = condition;
+                ThenBranch = thenBranch;
+                ElseBranch = elseBranch;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitIfThenStmt(this);
             }
         }
 

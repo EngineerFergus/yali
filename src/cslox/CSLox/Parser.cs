@@ -51,6 +51,11 @@ namespace CSLox
 
         private Stmt Statement()
         {
+            if (Match(TokenType.IF))
+            {
+                return IfStatement();
+            }
+
             if (Match(TokenType.PRINT))
             {
                 return PrintStatement();
@@ -62,6 +67,23 @@ namespace CSLox
             }
 
             return ExpressionStatement();
+        }
+
+        private Stmt IfStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, $"Expected '(' after 'if'.");
+            Expr condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, $"Expected ') after if condition.");
+
+            Stmt thenBranch = Statement();
+            Stmt? elseBranch = null;
+
+            if (Match(TokenType.ELSE))
+            {
+                elseBranch = Statement();
+            }
+
+            return new Stmt.IfThen(condition, thenBranch, elseBranch);
         }
 
         private Stmt PrintStatement()

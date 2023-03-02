@@ -27,6 +27,7 @@ namespace GenerateAst
             {
                 "Block       : List<Stmt?> statements | Statements",
                 "Expression  : Expr expr | Expr",
+                "IfThen      : Expr condition | Condition, Stmt thenBranch | ThenBranch, Stmt? elseBranch | ElseBranch",
                 "Print       : Expr expr | Expr",
                 "Var         : Token name | Name, Expr? initializer | Initializer",
             });
