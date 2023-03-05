@@ -119,6 +119,28 @@
             return literal.Value;
         }
 
+        public object? VisitLogicalExpr(Expr.Logical logical)
+        {
+            object? left = Evaluate(logical.Left);
+
+            if (logical.Operator.Type == TokenType.OR)
+            {
+                if (IsTruthy(left))
+                {
+                    return left;
+                }
+            }
+            else
+            {
+                if (!IsTruthy(left))
+                {
+                    return left;
+                }
+            }
+
+            return Evaluate(logical.Right);
+        }
+
         public object? VisitUnaryExpr(Expr.Unary unary)
         {
             object? right = Evaluate(unary.Right);

@@ -11,6 +11,7 @@ namespace CSLox
             T VisitBinaryExpr(Binary binary);
             T VisitGroupingExpr(Grouping grouping);
             T VisitLiteralExpr(Literal literal);
+            T VisitLogicalExpr(Logical logical);
             T VisitUnaryExpr(Unary unary);
             T VisitVariableExpr(Variable variable);
         }
@@ -78,6 +79,25 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitLiteralExpr(this);
+            }
+        }
+
+        public class Logical : Expr
+        {
+            public Expr Left { get; }
+            public Token Operator { get; }
+            public Expr Right { get; }
+
+            public Logical(Expr left, Token op, Expr right)
+            {
+                Left = left;
+                Operator = op;
+                Right = right;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitLogicalExpr(this);
             }
         }
 

@@ -39,6 +39,11 @@ namespace CSLox
             return literal.Value.ToString() ?? "nil";
         }
 
+        public string VisitLogicalExpr(Expr.Logical logical)
+        {
+            throw new NotImplementedException();
+        }
+
         public string VisitUnaryExpr(Expr.Unary unary)
         {
             return Paranthesize(unary.Operator.Lexeme, unary.Right);
