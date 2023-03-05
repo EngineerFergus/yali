@@ -62,6 +62,11 @@ namespace CSLox
                 return PrintStatement();
             }
 
+            if (Match(TokenType.WHILE))
+            {
+                return WhileStatement();
+            }
+
             if (Match(TokenType.LEFT_BRACE))
             {
                 return new Stmt.Block(Block());
@@ -107,6 +112,16 @@ namespace CSLox
 
             Consume(TokenType.SEMICOLON, "Expect \';\' after variable declaration");
             return new Stmt.Var(name, initializer);
+        }
+
+        private Stmt WhileStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+            Expr condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+            Stmt body = Statement();
+
+            return new Stmt.WhileLoop(condition, body);
         }
 
         private Stmt ExpressionStatement()

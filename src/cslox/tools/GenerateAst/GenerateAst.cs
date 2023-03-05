@@ -30,6 +30,7 @@ namespace GenerateAst
                 "Expression  : Expr expr | Expr",
                 "IfThen      : Expr condition | Condition, Stmt thenBranch | ThenBranch, Stmt? elseBranch | ElseBranch",
                 "Print       : Expr expr | Expr",
+                "WhileLoop   : Expr condition | Condition, Stmt body | Body",
                 "Var         : Token name | Name, Expr? initializer | Initializer",
             });
         }

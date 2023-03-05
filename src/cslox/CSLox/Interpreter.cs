@@ -256,6 +256,16 @@
             return new Void();
         }
 
+        public Void VisitWhileLoopStmt(Stmt.WhileLoop stmt)
+        {
+            while (IsTruthy(Evaluate(stmt.Condition)))
+            {
+                Execute(stmt.Body);
+            }
+
+            return new Void();
+        }
+
         public object? VisitAssignExpr(Expr.Assign expr)
         {
             object? value = Evaluate(expr.Value);

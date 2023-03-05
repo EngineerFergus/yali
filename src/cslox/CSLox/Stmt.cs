@@ -11,6 +11,7 @@ namespace CSLox
             T VisitExpressionStmt(Expression expression);
             T VisitIfThenStmt(IfThen ifthen);
             T VisitPrintStmt(Print print);
+            T VisitWhileLoopStmt(WhileLoop whileloop);
             T VisitVarStmt(Var var);
         }
 
@@ -75,6 +76,23 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitPrintStmt(this);
+            }
+        }
+
+        public class WhileLoop : Stmt
+        {
+            public Expr Condition { get; }
+            public Stmt Body { get; }
+
+            public WhileLoop(Expr condition, Stmt body)
+            {
+                Condition = condition;
+                Body = body;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitWhileLoopStmt(this);
             }
         }
 
