@@ -9,6 +9,7 @@ namespace CSLox
         {
             T VisitAssignExpr(Assign assign);
             T VisitBinaryExpr(Binary binary);
+            T VisitCallExpr(Call call);
             T VisitGroupingExpr(Grouping grouping);
             T VisitLiteralExpr(Literal literal);
             T VisitLogicalExpr(Logical logical);
@@ -49,6 +50,25 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitBinaryExpr(this);
+            }
+        }
+
+        public class Call : Expr
+        {
+            public Expr Callee { get; }
+            public Token Paren { get; }
+            public List<Expr> Arguments { get; }
+
+            public Call(Expr callee, Token paren, List<Expr> arguments)
+            {
+                Callee = callee;
+                Paren = paren;
+                Arguments = arguments;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitCallExpr(this);
             }
         }
 

@@ -109,6 +109,31 @@
             return null;
         }
 
+        public object? VisitCallExpr(Expr.Call call)
+        {
+            object? callee = Evaluate(call.Callee);
+
+            List<object?> arguments = new();
+
+            foreach (Expr argument in call.Arguments)
+            {
+                arguments.Add(Evaluate(argument));
+            }
+
+            if (callee is not ILoxCallable function)
+            {
+                throw new RuntimeError(call.Paren, "Can only call functions and classes.");
+            }
+
+            if (arguments.Count != function.Arity())
+            {
+                throw new RuntimeError(call.Paren, $"Expected {function.Arity()} " +
+                    $"arguments but got {arguments.Count}.");
+            }
+
+            return function.Call(this, arguments);
+        }
+
         public object? VisitGroupingExpr(Expr.Grouping grouping)
         {
             return Evaluate(grouping.Expression);

@@ -24,6 +24,11 @@ namespace CSLox
             return Paranthesize(binary.Operator.Lexeme, binary.Left, binary.Right);
         }
 
+        public string VisitCallExpr(Expr.Call call)
+        {
+            throw new NotImplementedException();
+        }
+
         public string VisitGroupingExpr(Expr.Grouping grouping)
         {
             return Paranthesize("group", grouping.Expression);
