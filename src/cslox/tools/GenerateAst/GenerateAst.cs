@@ -29,6 +29,7 @@ namespace GenerateAst
             {
                 "Block       : List<Stmt?> statements | Statements",
                 "Expression  : Expr expr | Expr",
+                "Function    : Token name | Name, List<Token> parameters | Params, List<Stmt?> body | Body",
                 "IfThen      : Expr condition | Condition, Stmt thenBranch | ThenBranch, Stmt? elseBranch | ElseBranch",
                 "Print       : Expr expr | Expr",
                 "WhileLoop   : Expr condition | Condition, Stmt body | Body",

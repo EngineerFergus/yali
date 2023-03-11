@@ -2,12 +2,12 @@
 {
     internal class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<Void>
     {
-        private readonly Environment _Globals = new Environment();
+        public readonly Environment Globals = new Environment();
         private Environment _Environment = new();
 
         public Interpreter()
         {
-            _Globals.Define("clock", new ClockCallable());
+            Globals.Define("clock", new ClockCallable());
         }
 
         public void Interpret(List<Stmt?> statements)
@@ -35,7 +35,7 @@
             stmt.Accept(this);
         }
 
-        private void ExecuteBlock(List<Stmt?> statements, Environment environment)
+        public void ExecuteBlock(List<Stmt?> statements, Environment environment)
         {
             Environment previous = _Environment;
 
@@ -245,6 +245,13 @@
         public Void VisitExpressionStmt(Stmt.Expression exprstmt)
         {
             _ = Evaluate(exprstmt.Expr);
+            return new Void();
+        }
+
+        public Void VisitFunctionStmt(Stmt.Function stmt)
+        {
+            LoxFunction function = new LoxFunction(stmt);
+            _Environment.Define(stmt.Name.Lexeme, function);
             return new Void();
         }
 

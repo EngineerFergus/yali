@@ -13,7 +13,7 @@ namespace CSLox
             return 0;
         }
 
-        public object Call(Interpreter interpreter, List<object?> arguments)
+        public object? Call(Interpreter interpreter, List<object?> arguments)
         {
             return (double)(DateTime.Now.Ticks / (double)TimeSpan.TicksPerMillisecond) / 1000.0;
         }

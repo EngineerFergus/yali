@@ -9,6 +9,7 @@ namespace CSLox
         {
             T VisitBlockStmt(Block block);
             T VisitExpressionStmt(Expression expression);
+            T VisitFunctionStmt(Function function);
             T VisitIfThenStmt(IfThen ifthen);
             T VisitPrintStmt(Print print);
             T VisitWhileLoopStmt(WhileLoop whileloop);
@@ -42,6 +43,25 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitExpressionStmt(this);
+            }
+        }
+
+        public class Function : Stmt
+        {
+            public Token Name { get; }
+            public List<Token> Params { get; }
+            public List<Stmt?> Body { get; }
+
+            public Function(Token name, List<Token> parameters, List<Stmt?> body)
+            {
+                Name = name;
+                Params = parameters;
+                Body = body;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitFunctionStmt(this);
             }
         }
 
