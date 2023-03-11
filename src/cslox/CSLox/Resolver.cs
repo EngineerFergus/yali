@@ -2,8 +2,15 @@
 {
     internal class Resolver : Expr.IVisitor<Void>, Stmt.IVisitor<Void>
     {
+        private enum FunctionType
+        {
+            NONE,
+            FUNCTION,
+        }
+
         private readonly Interpreter _Interpreter;
         private readonly Stack<Dictionary<string, bool>> _Scopes = new();
+        private FunctionType _CurrentFunction = FunctionType.NONE;
 
         public Resolver(Interpreter interpreter)
         {
@@ -33,6 +40,12 @@
             if (_Scopes.Count == 0) { return; }
 
             Dictionary<string, bool> scope = _Scopes.Peek();
+
+            if (scope.ContainsKey(name.Lexeme))
+            {
+                Lox.Error(name, "Already a variable with this name in this scope");
+            }
+
             scope.Add(name.Lexeme, false);
         }
 
@@ -80,7 +93,7 @@
         {
             Declare(stmt.Name);
             Define(stmt.Name);
-            ResolveFunction(stmt);
+            ResolveFunction(stmt, FunctionType.FUNCTION);
             return new Void();
         }
 
@@ -100,6 +113,11 @@
 
         public Void VisitReturnStmt(Stmt.Return stmt)
         {
+            if (_CurrentFunction == FunctionType.NONE)
+            {
+                Lox.Error(stmt.Keyword, "Can't return from top-level code.");
+            }
+
             if (stmt.Value != null)
             {
                 Resolve(stmt.Value);
@@ -178,9 +196,13 @@
 
         public Void VisitVariableExpr(Expr.Variable expr)
         {
-            if (_Scopes.Count > 0 && _Scopes.Peek()[expr.Name.Lexeme] == false)
+            if (_Scopes.Count > 0)
             {
-                Lox.Error(expr.Name, "Can't read local variable in its own initializer.");
+                var scope = _Scopes.Peek();
+                if (scope.ContainsKey(expr.Name.Lexeme) && scope[expr.Name.Lexeme] == false)
+                {
+                    Lox.Error(expr.Name, "Can't read local variable in its own initializer.");
+                }
             }
 
             ResolveLocal(expr, expr.Name);
@@ -197,8 +219,11 @@
             expr?.Accept(this);
         }
 
-        private void ResolveFunction(Stmt.Function function)
+        private void ResolveFunction(Stmt.Function function, FunctionType type)
         {
+            FunctionType enclosingFunction = _CurrentFunction;
+            _CurrentFunction = type;
+
             BeginScope();
             foreach (Token param in function.Params)
             {
@@ -208,6 +233,7 @@
 
             Resolve(function.Body);
             EndScope();
+            _CurrentFunction = enclosingFunction;
         }
     }
 }

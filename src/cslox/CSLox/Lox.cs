@@ -64,6 +64,11 @@ namespace CSLox
 
             if (_HadError) { return; }
 
+            Resolver resolver = new(_Interpreter);
+            resolver.Resolve(statements);
+
+            if (_HadError) { return; }
+
             _Interpreter.Interpret(statements);
         }
 

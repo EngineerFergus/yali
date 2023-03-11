@@ -26,6 +26,31 @@
             _Values.Add(name, value);
         }
 
+        public Environment? Ancestor(int distance)
+        {
+            Environment? environment = this;
+            for (int i = 0; i < distance; i++)
+            {
+                if (environment == null)
+                {
+                    throw new Exception("Encountered a null environment while navigating to ancestor.");
+                }
+                environment = environment._Enclosing;
+            }
+
+            return environment;
+        }
+
+        public object? GetAt(int distance, string name)
+        {
+            return Ancestor(distance)?._Values[name];
+        }
+
+        public void AssignAt(int distance, Token name, object? value)
+        {
+            Ancestor(distance)?._Values.Add(name.Lexeme, value);
+        }
+
         public object? Get(Token name)
         {
             if (_Values.ContainsKey(name.Lexeme))

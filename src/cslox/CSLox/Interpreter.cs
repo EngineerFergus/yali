@@ -294,9 +294,22 @@
             throw new Return(value);
         }
 
-        public object? VisitVariableExpr(Expr.Variable stmt)
+        public object? VisitVariableExpr(Expr.Variable expr)
         {
-            return _Environment.Get(stmt.Name);
+            return LookUpVariable(expr.Name, expr);
+        }
+
+        public object? LookUpVariable(Token name, Expr expr)
+        {
+            if (_Locals.ContainsKey(expr))
+            {
+                int distance = _Locals[expr];
+                return _Environment.GetAt(distance, name.Lexeme);
+            }
+            else
+            {
+                return Globals.Get(name);
+            }
         }
 
         public Void VisitVarStmt(Stmt.Var stmt)
@@ -325,7 +338,17 @@
         public object? VisitAssignExpr(Expr.Assign expr)
         {
             object? value = Evaluate(expr.Value);
-            _Environment.Assign(expr.Name, value);
+
+            if (_Locals.ContainsKey(expr))
+            {
+                int distance = _Locals[expr];
+                _Environment.AssignAt(distance, expr.Name, value);
+            }
+            else
+            {
+                Globals.Assign(expr.Name, value);
+            }
+
             return value;
         }
     }
