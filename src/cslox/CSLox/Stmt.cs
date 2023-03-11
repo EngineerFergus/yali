@@ -7,13 +7,14 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
-            T VisitBlockStmt(Block block);
-            T VisitExpressionStmt(Expression expression);
-            T VisitFunctionStmt(Function function);
-            T VisitIfThenStmt(IfThen ifthen);
-            T VisitPrintStmt(Print print);
-            T VisitWhileLoopStmt(WhileLoop whileloop);
-            T VisitVarStmt(Var var);
+            T VisitBlockStmt(Block stmt);
+            T VisitExpressionStmt(Expression stmt);
+            T VisitFunctionStmt(Function stmt);
+            T VisitIfThenStmt(IfThen stmt);
+            T VisitPrintStmt(Print stmt);
+            T VisitReturnStmt(Return stmt);
+            T VisitWhileLoopStmt(WhileLoop stmt);
+            T VisitVarStmt(Var stmt);
         }
 
         public class Block : Stmt
@@ -96,6 +97,23 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitPrintStmt(this);
+            }
+        }
+
+        public class Return : Stmt
+        {
+            public Token Keyword { get; }
+            public Expr? Value { get; }
+
+            public Return(Token keyword, Expr? value)
+            {
+                Keyword = keyword;
+                Value = value;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitReturnStmt(this);
             }
         }
 

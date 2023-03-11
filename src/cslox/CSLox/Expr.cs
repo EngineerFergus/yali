@@ -7,14 +7,14 @@ namespace CSLox
 
         public interface IVisitor<T>
         {
-            T VisitAssignExpr(Assign assign);
-            T VisitBinaryExpr(Binary binary);
-            T VisitCallExpr(Call call);
-            T VisitGroupingExpr(Grouping grouping);
-            T VisitLiteralExpr(Literal literal);
-            T VisitLogicalExpr(Logical logical);
-            T VisitUnaryExpr(Unary unary);
-            T VisitVariableExpr(Variable variable);
+            T VisitAssignExpr(Assign expr);
+            T VisitBinaryExpr(Binary expr);
+            T VisitCallExpr(Call expr);
+            T VisitGroupingExpr(Grouping expr);
+            T VisitLiteralExpr(Literal expr);
+            T VisitLogicalExpr(Logical expr);
+            T VisitUnaryExpr(Unary expr);
+            T VisitVariableExpr(Variable expr);
         }
 
         public class Assign : Expr

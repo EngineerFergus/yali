@@ -32,6 +32,7 @@ namespace GenerateAst
                 "Function    : Token name | Name, List<Token> parameters | Params, List<Stmt?> body | Body",
                 "IfThen      : Expr condition | Condition, Stmt thenBranch | ThenBranch, Stmt? elseBranch | ElseBranch",
                 "Print       : Expr expr | Expr",
+                "Return      : Token keyword | Keyword, Expr? value | Value",
                 "WhileLoop   : Expr condition | Condition, Stmt body | Body",
                 "Var         : Token name | Name, Expr? initializer | Initializer",
             });
@@ -76,7 +77,7 @@ namespace GenerateAst
             {
                 string[] splits = type.Split(':');
                 string className = splits[0].Trim();
-                builder.AppendLine($"            T Visit{className}{baseName}({className} {className.ToLower()});");
+                builder.AppendLine($"            T Visit{className}{baseName}({className} {baseName.ToLower()});");
             }
 
             builder.AppendLine("        }");

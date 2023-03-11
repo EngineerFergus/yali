@@ -72,6 +72,11 @@ namespace CSLox
                 return PrintStatement();
             }
 
+            if (Match(TokenType.RETURN))
+            {
+                return ReturnStatement();
+            }
+
             if (Match(TokenType.WHILE))
             {
                 return WhileStatement();
@@ -171,6 +176,19 @@ namespace CSLox
             Expr value = Expression();
             Consume(TokenType.SEMICOLON, "Expect \';\' after value.");
             return new Stmt.Print(value);
+        }
+
+        private Stmt ReturnStatement()
+        {
+            Token keyword = Previous();
+            Expr? value = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                value = Expression();
+            }
+
+            Consume(TokenType.SEMICOLON, "Expect ':' after return value.");
+            return new Stmt.Return(keyword, value);
         }
 
         private Stmt VarDeclaration()

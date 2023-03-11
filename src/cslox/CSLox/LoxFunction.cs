@@ -28,7 +28,15 @@ namespace CSLox
                 environment.Define(_Declaration.Params[i].Lexeme, arguments[i]);
             }
 
-            interpreter.ExecuteBlock(_Declaration.Body, environment);
+            try
+            {
+                interpreter.ExecuteBlock(_Declaration.Body, environment);
+            }
+            catch (Return returnValue)
+            {
+                return returnValue.Value;
+            }
+
             return null;
         }
 

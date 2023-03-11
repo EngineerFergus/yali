@@ -2,12 +2,13 @@
 {
     internal class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<Void>
     {
-        public readonly Environment Globals = new Environment();
-        private Environment _Environment = new();
+        public readonly Environment Globals = new();
+        private Environment _Environment;
 
         public Interpreter()
         {
             Globals.Define("clock", new ClockCallable());
+            _Environment = Globals;
         }
 
         public void Interpret(List<Stmt?> statements)
@@ -66,28 +67,28 @@
             return new Void();
         }
 
-        public object? VisitBinaryExpr(Expr.Binary binary)
+        public object? VisitBinaryExpr(Expr.Binary expr)
         {
-            object? left = Evaluate(binary.Left);
-            object? right = Evaluate(binary.Right);
+            object? left = Evaluate(expr.Left);
+            object? right = Evaluate(expr.Right);
             double l, r;
 
-            switch (binary.Operator.Type)
+            switch (expr.Operator.Type)
             {
                 case TokenType.GREATER:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l > r;
                 case TokenType.GREATER_EQUAL:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l >= r;
                 case TokenType.LESS:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l < r;
                 case TokenType.LESS_EQUAL:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l <= r;
                 case TokenType.MINUS:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l - r;
                 case TokenType.PLUS:
                     if (left is double leftDouble && right is double rightDouble)
@@ -98,12 +99,12 @@
                     {
                         return leftStr + rightStr;
                     }
-                    throw new RuntimeError(binary.Operator, "Operands must be two numbers or two strings");
+                    throw new RuntimeError(expr.Operator, "Operands must be two numbers or two strings");
                 case TokenType.SLASH:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l / r;
                 case TokenType.STAR:
-                    (l, r) = CheckNumberOperands(binary.Operator, left, right);
+                    (l, r) = CheckNumberOperands(expr.Operator, left, right);
                     return l * r;
                 case TokenType.BANG_EQUAL:
                     return !IsEqual(left, right);
@@ -115,46 +116,46 @@
             return null;
         }
 
-        public object? VisitCallExpr(Expr.Call call)
+        public object? VisitCallExpr(Expr.Call expr)
         {
-            object? callee = Evaluate(call.Callee);
+            object? callee = Evaluate(expr.Callee);
 
             List<object?> arguments = new();
 
-            foreach (Expr argument in call.Arguments)
+            foreach (Expr argument in expr.Arguments)
             {
                 arguments.Add(Evaluate(argument));
             }
 
             if (callee is not ILoxCallable function)
             {
-                throw new RuntimeError(call.Paren, "Can only call functions and classes.");
+                throw new RuntimeError(expr.Paren, "Can only call functions and classes.");
             }
 
             if (arguments.Count != function.Arity())
             {
-                throw new RuntimeError(call.Paren, $"Expected {function.Arity()} " +
+                throw new RuntimeError(expr.Paren, $"Expected {function.Arity()} " +
                     $"arguments but got {arguments.Count}.");
             }
 
             return function.Call(this, arguments);
         }
 
-        public object? VisitGroupingExpr(Expr.Grouping grouping)
+        public object? VisitGroupingExpr(Expr.Grouping expr)
         {
-            return Evaluate(grouping.Expression);
+            return Evaluate(expr.Expression);
         }
 
-        public object? VisitLiteralExpr(Expr.Literal literal)
+        public object? VisitLiteralExpr(Expr.Literal expr)
         {
-            return literal.Value;
+            return expr.Value;
         }
 
-        public object? VisitLogicalExpr(Expr.Logical logical)
+        public object? VisitLogicalExpr(Expr.Logical expr)
         {
-            object? left = Evaluate(logical.Left);
+            object? left = Evaluate(expr.Left);
 
-            if (logical.Operator.Type == TokenType.OR)
+            if (expr.Operator.Type == TokenType.OR)
             {
                 if (IsTruthy(left))
                 {
@@ -169,19 +170,19 @@
                 }
             }
 
-            return Evaluate(logical.Right);
+            return Evaluate(expr.Right);
         }
 
-        public object? VisitUnaryExpr(Expr.Unary unary)
+        public object? VisitUnaryExpr(Expr.Unary expr)
         {
-            object? right = Evaluate(unary.Right);
+            object? right = Evaluate(expr.Right);
 
-            switch (unary.Operator.Type)
+            switch (expr.Operator.Type)
             {
                 case TokenType.BANG:
                     return !IsTruthy(right);
                 case TokenType.MINUS:
-                    double r = CheckNumberOperand(unary.Operator, right);
+                    double r = CheckNumberOperand(expr.Operator, right);
                     return -r;
             }
 
@@ -242,9 +243,9 @@
             return expr.Accept(this);
         }
 
-        public Void VisitExpressionStmt(Stmt.Expression exprstmt)
+        public Void VisitExpressionStmt(Stmt.Expression stmt)
         {
-            _ = Evaluate(exprstmt.Expr);
+            _ = Evaluate(stmt.Expr);
             return new Void();
         }
 
@@ -276,21 +277,32 @@
             return new Void();
         }
 
-        public object? VisitVariableExpr(Expr.Variable variable)
+        public Void VisitReturnStmt(Stmt.Return stmt)
         {
-            return _Environment.Get(variable.Name);
+            object? value = null;
+            if (stmt.Value != null)
+            {
+                value = Evaluate(stmt.Value);
+            }
+
+            throw new Return(value);
         }
 
-        public Void VisitVarStmt(Stmt.Var var)
+        public object? VisitVariableExpr(Expr.Variable stmt)
+        {
+            return _Environment.Get(stmt.Name);
+        }
+
+        public Void VisitVarStmt(Stmt.Var stmt)
         {
             object? value = null;
 
-            if (var.Initializer != null)
+            if (stmt.Initializer != null)
             {
-                value = Evaluate(var.Initializer);
+                value = Evaluate(stmt.Initializer);
             }
 
-            _Environment.Define(var.Name.Lexeme, value);
+            _Environment.Define(stmt.Name.Lexeme, value);
             return new Void();
         }
 
