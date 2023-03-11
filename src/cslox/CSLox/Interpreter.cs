@@ -251,7 +251,7 @@
 
         public Void VisitFunctionStmt(Stmt.Function stmt)
         {
-            LoxFunction function = new LoxFunction(stmt);
+            LoxFunction function = new LoxFunction(stmt, _Environment);
             _Environment.Define(stmt.Name.Lexeme, function);
             return new Void();
         }
