@@ -4,6 +4,7 @@
     {
         public readonly Environment Globals = new();
         private Environment _Environment;
+        private readonly Dictionary<Expr, int> _Locals = new();
 
         public Interpreter()
         {
@@ -34,6 +35,11 @@
         private void Execute(Stmt stmt)
         {
             stmt.Accept(this);
+        }
+
+        public void Resolve(Expr expr, int depth)
+        {
+            _Locals.Add(expr, depth);
         }
 
         public void ExecuteBlock(List<Stmt?> statements, Environment environment)
