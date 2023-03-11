@@ -2,7 +2,13 @@
 {
     internal class Interpreter : Expr.IVisitor<object?>, Stmt.IVisitor<Void>
     {
+        private readonly Environment _Globals = new Environment();
         private Environment _Environment = new();
+
+        public Interpreter()
+        {
+            _Globals.Define("clock", new ClockCallable());
+        }
 
         public void Interpret(List<Stmt?> statements)
         {
