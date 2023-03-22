@@ -43,7 +43,14 @@
 
         public object? GetAt(int distance, string name)
         {
-            return Ancestor(distance)?._Values[name];
+            var ancestor = Ancestor(distance);
+
+            if (ancestor != null && ancestor._Values.ContainsKey(name))
+            {
+                return ancestor._Values[name];
+            }
+
+            return null;
         }
 
         public void AssignAt(int distance, Token name, object? value)
