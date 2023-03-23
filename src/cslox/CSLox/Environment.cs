@@ -55,7 +55,18 @@
 
         public void AssignAt(int distance, Token name, object? value)
         {
-            Ancestor(distance)?._Values.Add(name.Lexeme, value);
+            var ancestor = Ancestor(distance);
+
+            if (ancestor == null) { throw new Exception("Encountered a null environment."); }
+
+            if (ancestor._Values.ContainsKey(name.Lexeme))
+            {
+                ancestor._Values[name.Lexeme] = value;
+            }
+            else
+            {
+                ancestor._Values.Add(name.Lexeme, value);
+            }
         }
 
         public object? Get(Token name)

@@ -65,11 +65,11 @@
 
         private void ResolveLocal(Expr expr, Token name)
         {
-            for (int i = _Scopes.Count - 1; i >= 0; i--)
+            for (int i = 0; i < _Scopes.Count; i++)
             {
                 if (_Scopes.ElementAt(i).ContainsKey(name.Lexeme))
                 {
-                    _Interpreter.Resolve(expr, _Scopes.Count - 1 - i);
+                    _Interpreter.Resolve(expr, i);
                     return;
                 }
             }
