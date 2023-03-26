@@ -14,6 +14,7 @@
         {
             NONE,
             CLASS,
+            SUBCLASS,
         }
 
         private readonly Interpreter _Interpreter;
@@ -107,7 +108,14 @@
 
             if (stmt.Superclass != null)
             {
+                _CurrentClass = ClassType.SUBCLASS;
                 Resolve(stmt.Superclass);
+            }
+
+            if (stmt.Superclass != null)
+            {
+                BeginScope();
+                _Scopes.Peek().Add("super", true);
             }
 
             BeginScope();
@@ -124,6 +132,8 @@
             }
 
             EndScope();
+
+            if (stmt.Superclass != null) { EndScope(); }
 
             _CurrentClass = enclosingClass;
             return new Void();
@@ -248,6 +258,21 @@
         {
             Resolve(expr.Value);
             Resolve(expr.Obj);
+            return new Void();
+        }
+
+        public Void VisitSuperExpr(Expr.Super expr)
+        {
+            if (_CurrentClass == ClassType.NONE)
+            {
+                Lox.Error(expr.Keyword, "Can't use 'super' outside of a class.");
+            }
+            else if (_CurrentClass != ClassType.SUBCLASS)
+            {
+                Lox.Error(expr.Keyword, "Can't use 'super' in a class with no superclass.");
+            }
+
+            ResolveLocal(expr, expr.Keyword);
             return new Void();
         }
 

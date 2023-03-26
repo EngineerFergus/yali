@@ -90,6 +90,12 @@
 
             _Environment.Define(stmt.Name.Lexeme, null);
 
+            if (stmt.Superclass != null)
+            {
+                _Environment = new Environment(_Environment);
+                _Environment.Define("super", superclass);
+            }
+
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
 
             foreach (var method in stmt.Methods)
@@ -100,6 +106,16 @@
             }
 
             LoxClass klass = new(stmt.Name.Lexeme, sups, methods);
+
+            if (superclass != null)
+            {
+                if (_Environment._Enclosing == null)
+                {
+                    throw new Exception("encountered a null environment");
+                }
+
+                _Environment = _Environment._Enclosing;
+            }
 
             _Environment.Assign(stmt.Name, klass);
             return new Void();
@@ -235,6 +251,30 @@
             instance.Set(expr.Name, value);
 
             return value;
+        }
+
+        public object? VisitSuperExpr(Expr.Super expr)
+        {
+            int distance = _Locals[expr];
+
+            if (_Environment.GetAt(distance, "super") is not LoxClass superclass)
+            {
+                throw new Exception("failed to find superclass");
+            }
+
+            if (_Environment.GetAt(distance - 1, "this") is not LoxInstance obj)
+            {
+                throw new Exception("failed to find this instance");
+            }
+
+            LoxFunction? method = superclass.FindMethod(expr.Method.Lexeme);
+
+            if (method == null)
+            {
+                throw new RuntimeError(expr.Method, $"Undefined property '{expr.Method.Lexeme}'.");
+            }
+
+            return method.Bind(obj);
         }
 
         public object? VisitThisExpr(Expr.This expr)

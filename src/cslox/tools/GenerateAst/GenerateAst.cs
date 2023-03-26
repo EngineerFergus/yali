@@ -23,6 +23,7 @@ namespace GenerateAst
                 "Literal  : object? value | Value",
                 "Logical  : Expr left | Left, Token op | Operator, Expr right | Right",
                 "Set      : Expr obj | Obj, Token name | Name, Expr value | Value",
+                "Super    : Token keyword | Keyword, Token method | Method",
                 "This     : Token keyword | Keyword",
                 "Unary    : Token op | Operator, Expr right | Right",
                 "Variable : Token name | Name",

@@ -2,7 +2,7 @@
 {
     public class Environment
     {
-        private readonly Environment? _Enclosing;
+        public readonly Environment? _Enclosing;
         private readonly Dictionary<string, object?> _Values = new();
 
         public Environment()
