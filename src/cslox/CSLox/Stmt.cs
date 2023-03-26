@@ -8,6 +8,7 @@ namespace CSLox
         public interface IVisitor<T>
         {
             T VisitBlockStmt(Block stmt);
+            T VisitClassStmt(Class stmt);
             T VisitExpressionStmt(Expression stmt);
             T VisitFunctionStmt(Function stmt);
             T VisitIfThenStmt(IfThen stmt);
@@ -29,6 +30,23 @@ namespace CSLox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                return visitor.VisitBlockStmt(this);
+            }
+        }
+
+        public class Class : Stmt
+        {
+            public Token Name { get; }
+            public List<Stmt.Function> Methods { get; }
+
+            public Class(Token name, List<Stmt.Function> methods)
+            {
+                Name = name;
+                Methods = methods;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+               return visitor.VisitClassStmt(this);
             }
         }
 

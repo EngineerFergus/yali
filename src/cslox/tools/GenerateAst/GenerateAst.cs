@@ -28,6 +28,7 @@ namespace GenerateAst
             DefineAst(outputDir, "Stmt", new List<string>()
             {
                 "Block       : List<Stmt?> statements | Statements",
+                "Class       : Token name | Name, List<Stmt.Function> methods | Methods",
                 "Expression  : Expr expr | Expr",
                 "Function    : Token name | Name, List<Token> parameters | Params, List<Stmt?> body | Body",
                 "IfThen      : Expr condition | Condition, Stmt thenBranch | ThenBranch, Stmt? elseBranch | ElseBranch",

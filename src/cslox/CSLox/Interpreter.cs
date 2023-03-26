@@ -73,6 +73,14 @@
             return new Void();
         }
 
+        public Void VisitClassStmt(Stmt.Class stmt)
+        {
+            _Environment.Define(stmt.Name.Lexeme, null);
+            LoxClass klass = new LoxClass(stmt.Name.Lexeme);
+            _Environment.Assign(stmt.Name, klass);
+            return new Void();
+        }
+
         public object? VisitBinaryExpr(Expr.Binary expr)
         {
             object? left = Evaluate(expr.Left);

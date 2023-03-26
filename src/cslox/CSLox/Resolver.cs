@@ -83,6 +83,13 @@
             return new Void();
         }
 
+        public Void VisitClassStmt(Stmt.Class stmt)
+        {
+            Declare(stmt.Name);
+            Define(stmt.Name);
+            return new Void();
+        }
+
         public Void VisitExpressionStmt(Stmt.Expression stmt)
         {
             Resolve(stmt.Expr);
