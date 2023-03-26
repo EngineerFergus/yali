@@ -212,17 +212,13 @@
         {
             object? obj = Evaluate(expr.Obj);
 
-            if (obj is not LoxInstance _)
+            if (obj is not LoxInstance instance)
             {
                 throw new RuntimeError(expr.Name, "Only instances have fields.");
             }
 
             object? value = Evaluate(expr.Value);
-            
-            if (value is LoxInstance instance)
-            {
-                instance.Set(expr.Name, value);
-            }
+            instance.Set(expr.Name, value);
 
             return value;
         }

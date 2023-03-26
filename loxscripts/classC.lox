@@ -1,0 +1,15 @@
+class Scaler {
+    init(scale) {
+        this.scale = scale;
+    }
+
+    scale_up(x) {
+        return this.scale * x;
+    }
+}
+
+var scaler = Scaler(2.0);
+print scaler.scale;
+
+var scaledValue = scaler.scale_up(3.0);
+print scaledValue;
