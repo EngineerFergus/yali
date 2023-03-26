@@ -76,7 +76,17 @@
         public Void VisitClassStmt(Stmt.Class stmt)
         {
             _Environment.Define(stmt.Name.Lexeme, null);
-            LoxClass klass = new LoxClass(stmt.Name.Lexeme);
+
+            Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
+
+            foreach (var method in stmt.Methods)
+            {
+                LoxFunction function = new LoxFunction(method, _Environment, 
+                    method.Name.Lexeme.Equals("init"));
+                methods.Add(method.Name.Lexeme, function);
+            }
+
+            LoxClass klass = new(stmt.Name.Lexeme, methods);
             _Environment.Assign(stmt.Name, klass);
             return new Void();
         }
@@ -155,6 +165,17 @@
             return function.Call(this, arguments);
         }
 
+        public object? VisitGetExpr(Expr.Get expr)
+        {
+            object? obj = Evaluate(expr.Obj);
+            if (obj is LoxInstance instance)
+            {
+                return instance.Get(expr.Name);
+            }
+
+            throw new RuntimeError(expr.Name, "Only instances have properties.");
+        }
+
         public object? VisitGroupingExpr(Expr.Grouping expr)
         {
             return Evaluate(expr.Expression);
@@ -185,6 +206,30 @@
             }
 
             return Evaluate(expr.Right);
+        }
+
+        public object? VisitSetExpr(Expr.Set expr)
+        {
+            object? obj = Evaluate(expr.Obj);
+
+            if (obj is not LoxInstance _)
+            {
+                throw new RuntimeError(expr.Name, "Only instances have fields.");
+            }
+
+            object? value = Evaluate(expr.Value);
+            
+            if (value is LoxInstance instance)
+            {
+                instance.Set(expr.Name, value);
+            }
+
+            return value;
+        }
+
+        public object? VisitThisExpr(Expr.This expr)
+        {
+            return LookUpVariable(expr.Keyword, expr);
         }
 
         public object? VisitUnaryExpr(Expr.Unary expr)
@@ -265,7 +310,7 @@
 
         public Void VisitFunctionStmt(Stmt.Function stmt)
         {
-            LoxFunction function = new LoxFunction(stmt, _Environment);
+            LoxFunction function = new LoxFunction(stmt, _Environment, false);
             _Environment.Define(stmt.Name.Lexeme, function);
             return new Void();
         }

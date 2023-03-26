@@ -10,11 +10,13 @@ namespace CSLox
     {
         private readonly Stmt.Function _Declaration;
         private readonly Environment _Closure;
+        private readonly bool _IsInitializer;
 
-        public LoxFunction(Stmt.Function declaration, Environment closure)
+        public LoxFunction(Stmt.Function declaration, Environment closure, bool isInitializer)
         {
             _Declaration = declaration;
             _Closure = closure;
+            _IsInitializer = isInitializer;
         }
 
         public int Arity()
@@ -36,10 +38,26 @@ namespace CSLox
             }
             catch (Return returnValue)
             {
+                if (_IsInitializer)
+                {
+                    return _Closure.GetAt(0, "this");
+                }
                 return returnValue.Value;
             }
 
+            if (_IsInitializer)
+            {
+                return _Closure.GetAt(0, "this");
+            }
+
             return null;
+        }
+
+        public LoxFunction Bind(LoxInstance instance)
+        {
+            Environment environment = new Environment(_Closure);
+            environment.Define("this", instance);
+            return new LoxFunction(_Declaration, environment, _IsInitializer);
         }
 
         public override string ToString()

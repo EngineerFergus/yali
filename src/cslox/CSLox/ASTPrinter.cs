@@ -29,6 +29,11 @@ namespace CSLox
             throw new NotImplementedException();
         }
 
+        public string VisitGetExpr(Expr.Get expr)
+        {
+            throw new NotImplementedException();
+        }
+
         public string VisitGroupingExpr(Expr.Grouping grouping)
         {
             return Paranthesize("group", grouping.Expression);
@@ -45,6 +50,16 @@ namespace CSLox
         }
 
         public string VisitLogicalExpr(Expr.Logical logical)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string VisitSetExpr(Expr.Set expr)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string VisitThisExpr(Expr.This expr)
         {
             throw new NotImplementedException();
         }

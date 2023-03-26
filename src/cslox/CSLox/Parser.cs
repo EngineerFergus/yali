@@ -298,6 +298,10 @@ namespace CSLox
                     Token name = variable.Name;
                     return new Expr.Assign(name, value);
                 }
+                else if (expr is Expr.Get getter)
+                {
+                    return new Expr.Set(getter.Obj, getter.Name, value);
+                }
 
                 Error(equals, "Invalid assignment target.");
             }
@@ -411,6 +415,11 @@ namespace CSLox
                 {
                     expr = FinishCall(expr);
                 }
+                else if (Match(TokenType.DOT))
+                {
+                    Token name = Consume(TokenType.IDENTIFIER, "Expect propety name after '.'.");
+                    expr = new Expr.Get(expr, name);
+                }
                 else
                 {
                     break;
@@ -451,6 +460,11 @@ namespace CSLox
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
                 return new Expr.Literal(Previous().Literal);
+            }
+
+            if (Match(TokenType.THIS))
+            {
+                return new Expr.This(Previous());
             }
 
             if (Match(TokenType.IDENTIFIER))

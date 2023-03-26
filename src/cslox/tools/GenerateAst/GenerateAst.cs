@@ -18,9 +18,12 @@ namespace GenerateAst
                 "Assign   : Token name | Name, Expr value | Value",
                 "Binary   : Expr left | Left, Token op | Operator, Expr right | Right",
                 "Call     : Expr callee | Callee, Token paren | Paren, List<Expr> arguments | Arguments",
+                "Get      : Expr obj | Obj, Token name | Name",
                 "Grouping : Expr expression | Expression",
                 "Literal  : object? value | Value",
                 "Logical  : Expr left | Left, Token op | Operator, Expr right | Right",
+                "Set      : Expr obj | Obj, Token name | Name, Expr value | Value",
+                "This     : Token keyword | Keyword",
                 "Unary    : Token op | Operator, Expr right | Right",
                 "Variable : Token name | Name",
             });

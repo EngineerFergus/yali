@@ -5,12 +5,21 @@
         private enum FunctionType
         {
             NONE,
+            METHOD,
             FUNCTION,
+            INITIALIZER,
+        }
+
+        private enum ClassType
+        {
+            NONE,
+            CLASS,
         }
 
         private readonly Interpreter _Interpreter;
         private readonly Stack<Dictionary<string, bool>> _Scopes = new();
         private FunctionType _CurrentFunction = FunctionType.NONE;
+        private ClassType _CurrentClass = ClassType.NONE;
 
         public Resolver(Interpreter interpreter)
         {
@@ -85,8 +94,28 @@
 
         public Void VisitClassStmt(Stmt.Class stmt)
         {
+            ClassType enclosingClass = _CurrentClass;
+            _CurrentClass = ClassType.CLASS;
+
             Declare(stmt.Name);
             Define(stmt.Name);
+
+            BeginScope();
+            _Scopes.Peek().Add("this", true);
+
+            foreach (Stmt.Function method in stmt.Methods)
+            {
+                FunctionType declaration = FunctionType.METHOD;
+                if (method.Name.Lexeme.Equals("init"))
+                {
+                    declaration = FunctionType.INITIALIZER;
+                }
+                ResolveFunction(method, declaration);
+            }
+
+            EndScope();
+
+            _CurrentClass = enclosingClass;
             return new Void();
         }
 
@@ -127,6 +156,10 @@
 
             if (stmt.Value != null)
             {
+                if (_CurrentFunction == FunctionType.INITIALIZER)
+                {
+                    Lox.Error(stmt.Keyword, "Can't return from an initializer.");
+                }
                 Resolve(stmt.Value);
             }
 
@@ -177,6 +210,12 @@
             return new Void();
         }
 
+        public Void VisitGetExpr(Expr.Get expr)
+        {
+            Resolve(expr.Obj);
+            return new Void();
+        }
+
         public Void VisitGroupingExpr(Expr.Grouping expr)
         {
             Resolve(expr.Expression);
@@ -192,6 +231,25 @@
         {
             Resolve(expr.Left);
             Resolve(expr.Right);
+            return new Void();
+        }
+
+        public Void VisitSetExpr(Expr.Set expr)
+        {
+            Resolve(expr.Value);
+            Resolve(expr.Obj);
+            return new Void();
+        }
+
+        public Void VisitThisExpr(Expr.This expr)
+        {
+            if (_CurrentClass == ClassType.NONE)
+            {
+                Lox.Error(expr.Keyword, "Can't use 'this' outside of class.");
+                return new Void();
+            }
+
+            ResolveLocal(expr, expr.Keyword);
             return new Void();
         }
 
