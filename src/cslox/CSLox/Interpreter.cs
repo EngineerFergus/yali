@@ -75,6 +75,19 @@
 
         public Void VisitClassStmt(Stmt.Class stmt)
         {
+            object? superclass = null;
+            LoxClass? sups = null;
+
+            if (stmt.Superclass != null)
+            {
+                superclass = Evaluate(stmt.Superclass);
+                if (superclass is not LoxClass s)
+                {
+                    throw new RuntimeError(stmt.Superclass.Name, "Superclass must be a class.");
+                }
+                sups = s;
+            }
+
             _Environment.Define(stmt.Name.Lexeme, null);
 
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
@@ -86,7 +99,8 @@
                 methods.Add(method.Name.Lexeme, function);
             }
 
-            LoxClass klass = new(stmt.Name.Lexeme, methods);
+            LoxClass klass = new(stmt.Name.Lexeme, sups, methods);
+
             _Environment.Assign(stmt.Name, klass);
             return new Void();
         }

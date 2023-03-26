@@ -4,11 +4,13 @@
     {
         public string Name { get; }
         private readonly Dictionary<string, LoxFunction> _Methods;
+        private readonly LoxClass? _Superclass;
 
-        public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+        public LoxClass(string name, LoxClass? superclass, Dictionary<string, LoxFunction> methods)
         {
             Name = name;
             _Methods = methods;
+            _Superclass = superclass;
         }
 
         public LoxFunction? FindMethod(string name)
@@ -16,6 +18,11 @@
             if (_Methods.ContainsKey(name))
             {
                 return _Methods[name];
+            }
+
+            if (_Superclass != null)
+            {
+                return _Superclass.FindMethod(name);
             }
 
             return null;
