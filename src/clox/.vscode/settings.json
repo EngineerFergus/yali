@@ -1,0 +1,11 @@
+{
+    "makefile.configurations": [
+        {
+            "[makefile]": {
+                "editor.insertSpaces": false,
+                "editor.detectIndentation": false
+            },
+            "name": "Unnamed configuration 1"
+        }
+    ]
+}
