@@ -1,4 +1,4 @@
-files := main.c chunk.c memory.c debug.c value.c vm.c
+files := main.c chunk.c memory.c debug.c value.c vm.c scanner.c compiler.c
 
 ..\build\clox.exe: $(files)
 	gcc -o ..\build\clox $(files)

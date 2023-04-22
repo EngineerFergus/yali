@@ -63,7 +63,7 @@ int main(int argc, const char* argv[]) {
     initVM();
     
     if (argc == 1) {
-        relp();
+        repl();
     } else if (argc == 2) {
         runFile(argv[1]);
     } else {
