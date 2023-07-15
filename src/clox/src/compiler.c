@@ -316,7 +316,7 @@ static uint8_t argumentList() {
             argCount++;
         } while (match(TOKEN_COMMA));
     }
-    consume(TOKEN_RIGHT_BRACE, "Expect ')' after arguments.");
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
     return argCount;
 }
 
