@@ -587,8 +587,6 @@ static void function(FunctionType type) {
         emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
         emitByte(compiler.upvalues[i].index);
     }
-
-    emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
 }
 
 static void funDeclaration() {
