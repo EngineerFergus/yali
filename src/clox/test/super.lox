@@ -1,0 +1,15 @@
+class Hero {
+    saySomething() {
+        print "I'm here to kick ass";
+    }
+}
+
+class Batman < Hero {
+    catchPhrase() {
+        saySomething();
+        print "Because I'm Batman.";
+    }
+}
+
+var bats = Batman();
+bats.catchPhrase();
