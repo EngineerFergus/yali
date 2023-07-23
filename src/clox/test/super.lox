@@ -6,7 +6,7 @@ class Hero {
 
 class Batman < Hero {
     catchPhrase() {
-        saySomething();
+        super.saySomething();
         print "Because I'm Batman.";
     }
 }
